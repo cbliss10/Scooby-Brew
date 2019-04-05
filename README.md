@@ -1,2 +1,2 @@
 # Scooby-Brew
-Developing program to run a home brewing system off a raspberry pi.
+Begining as a web-based brewing application with aspirations to go mobile and connect with brewing hardware.
