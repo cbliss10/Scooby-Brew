@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Welcome to Scooby Brew!</title>
+    <title>Scooby Brew Registration</title>
     <script src="https://code.jquery.com/jquery-3.4.0.min.js"
       integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -18,12 +18,19 @@
 <body>
     <div class="container">
         <div class="jumbotron">
-            <h1 class="display-4">Welcome to Scooby Brew!</h1>
-            <p class="lead">Brewing Tools and Social Network</p>
-            <hr class="my-4">
-            <p>Login to get started!</p>
-            <button>Login</button>
-            <a class="btn btn-primary" href="{% url 'basic_pages:register' %}">Sign Up</a>
+            {% if registered %}
+                <h1>Thank you for registering!</h1>
+            {% else %}
+                <h1>Register Here</h1>
+                <h3>Just fill out the form.</h3>      
+                
+                <form enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    {{ registration_form.as_p }}
+                    <input type="submit" value="Register">
+                </form>
+            {% endif %}
+            
         </div>
     </div>
 </body>
