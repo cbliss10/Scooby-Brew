@@ -1,0 +1,32 @@
+{
+  "name": "scooby-brew",
+  "version": "1.0.0",
+  "description": "A node.js webserver based brewery control system designed for Raspberry Pi.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbliss10/Scooby-Brew.git"
+  },
+  "keywords": [
+    "brewing",
+    "beer",
+    "homebrew"
+  ],
+  "author": "Christopher Bliss",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cbliss10/Scooby-Brew/issues"
+  },
+  "homepage": "https://github.com/cbliss10/Scooby-Brew#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0"
+  }
+}
