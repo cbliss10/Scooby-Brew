@@ -26,7 +26,11 @@
     "nodemon": "^2.0.2"
   },
   "dependencies": {
+    "ds18b20-raspi": "^0.3.4",
     "express": "^4.17.1",
-    "express-handlebars": "^3.1.0"
+    "express-handlebars": "^3.1.0",
+    "express-ws": "^4.0.0",
+    "pigpio": "^2.0.1",
+    "socket.io": "^2.3.0"
   }
 }

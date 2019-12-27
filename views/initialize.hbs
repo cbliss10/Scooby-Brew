@@ -1,1 +1,14 @@
-<h1>This is the Scooby Brew initialization page.</h1>
+<h1>Scooby Brew initialization</h1>
+<p>Found {{ sensors.length }} device(s):</p>
+<table>
+    <thead>
+        <th>Sensor Name</th>
+        <th>Sensor Address</th>
+        <th>New Name (optional)</th>
+    </thead>
+    <tbody>
+    {{#each sensors}}
+        <tr><td>{{ this.name }}</td><td>{{ this.address }}</td><td><input type="text"></td></tr>
+    {{/each}}
+    </tbody>
+</table>
