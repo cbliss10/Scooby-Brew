@@ -1,12 +1,13 @@
 const path = require('path');
 
 const express = require('express');
-const app = express();
-//const server = require('http').Server(app);
 const expressHbs = require('express-handlebars');
-const expressWs = require('express-ws')(app);
+const enableWs = require('express-ws');
+
+const app = express();
+enableWs(app);
+
 const fs = require('fs');
-//const io = require('socket.io')(server);
 const Gpio = require('pigpio').Gpio;
 const sensors = require('ds18b20-raspi');
 
@@ -22,13 +23,14 @@ app.engine('hbs', expressHbs({layoutsDir: 'views/layouts', defaultLayout: "main-
 app.set('view engine', 'hbs');
 app.set('views','views');
 
-app.use('/', (req, res, next) => {
+app.get('/', (req, res, next) => {
     res.render("initialize", {pageTitle: 'Initialization', sensors: sensorList });
 });
 
 app.ws('/', function(ws,req) {
     ws.on('message', function(msg) {
         console.log(msg);
+        ws.send(msg);
     });
 });
 
