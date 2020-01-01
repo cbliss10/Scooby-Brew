@@ -4,6 +4,108 @@
 <body>
     <%- include('includes/navigation.ejs') %>
     <div class="container">
-        <h1 class="display-1">Brew</h1>
+        <div class="card-deck text-center mt-4">
+            <div class="card" style="width: 18rem;">
+                <h2 class="m-4">Hot Liquor Tank</h2>
+                <h5 class="card-text border-top border-3">Temperature Controller</h5>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <strong class="mx-2">Current Temp: </strong>
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-center">165&deg;F</div>
+                        <div class="col">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <strong class="mx-2">Set Temp: </strong>
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-center">
+                            <input class="w-50 text-center" type="text" name="hlt-set-temp" id="" value="165">&deg;F
+                        </div>
+                        <div class="col justify-content-center">
+                            <div class="row justify-content-center">
+                                <button class="btn btn-dark w-75" type="button">UP</button>
+                            </div>
+                            <div class="row justify-content-center">
+                                <button class="btn btn-dark w-75" type="button">DOWN</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-dark w-100" type="button">Run</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-dark w-100" type="button">On</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="width: 18rem;">
+                <h2 class="m-4">Mash Tun</h2>
+                <h5 class="card-text border-top border-3">Temperature Controller</h5>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <strong class="mx-2">Current Temp: </strong>
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-center">165&deg;F</div>
+                        <div class="col">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="width: 18rem;">
+                <h2 class="m-4">Boil Kettle</h2>
+                <h5 class="card-text border-top border-3">Temperature Controller</h5>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <strong class="mx-2">Current Temp: </strong>
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-center">165&deg;F</div>
+                        <div class="col">
+                            <!-- empty -->
+                        </div>
+                    </div>
+                </div>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <strong class="mx-2">Set Temp: </strong>
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-center">
+                            <input class="w-50 text-center" type="text" name="hlt-set-temp" id="" value="165">&deg;F
+                        </div>
+                        <div class="col">
+                            <div class="row justify-content-center">
+                                <button class="btn btn-dark w-75" type="button">UP</button>
+                            </div>
+                            <div class="row justify-content-center">
+                                <button class="btn btn-dark w-75" type="button">DOWN</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-dark w-100" type="button">Run</button>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-dark w-100" type="button">On</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-<%- include('includes/end.ejs') %>
+    <%- include('includes/end.ejs') %>
