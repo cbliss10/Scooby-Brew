@@ -1,40 +1,66 @@
 const path = require('path');
 
 const express = require('express');
-const expressHbs = require('express-handlebars');
-const enableWs = require('express-ws');
-
 const app = express();
-enableWs(app);
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+//const control = require(path.join(__dirname, 'scripts', 'controller.js'));
 
+const bodyParser = require('body-parser');
+const errorController = require('./controllers/error');
 const fs = require('fs');
 const Gpio = require('pigpio').Gpio;
 const sensors = require('ds18b20-raspi');
+
+// global variables
+var initialized = false;
+var controllers = [];
 
 // GPIO initialization
 const initList = sensors.list();
 let sensorList = [], sensorIndex = 1;
 initList.forEach(sensorAddress => {
-    sensorList.push({name: "Unnamed Sensor " + sensorIndex, address: sensorAddress});
+    //let sensor = control.input(sensorIndex, "UnnamedSensor" + sensorIndex, sensorAddress);
+    //sensorList.push(sensor);
     sensorIndex ++;
 });
 
-app.engine('hbs', expressHbs({layoutsDir: 'views/layouts', defaultLayout: "main-layout", extname:'hbs'}));
-app.set('view engine', 'hbs');
+app.set('view engine', 'ejs');
 app.set('views','views');
 
-app.get('/', (req, res, next) => {
-    res.render("initialize", {pageTitle: 'Initialization', sensors: sensorList });
-});
+const configRoutes = require('./routes/config');
+const brewRoutes = require('./routes/brew');
 
-app.ws('/', function(ws,req) {
-    ws.on('message', function(msg) {
-        console.log(msg);
-        ws.send(msg);
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'node_modules', 'bootstrap')));
+app.use(express.static(path.join(__dirname, 'node_modules', 'popper.js')));
+app.use(express.static(path.join(__dirname, 'node_modules', 'jquery')));
+
+app.use('/configure', configRoutes);
+app.use('/brew', brewRoutes);
+
+app.get('/', (req, res, next) => {
+    res.render('index', {
+        pageTitle: 'Scooby Brew',
+        path: ''
+    });
+})
+
+app.use(errorController.get404);
+
+io.on('connection', function (socket) {
+    let i = 1;
+    socket.emit('consoleMessage', 'Socket.io connected.');
+    socket.on('requestData', function(){
+       // console.log("Data request " + i);
+        //i++;
+        let temp1 = sensors.readF(initList[0]);
+        socket.emit('sensor1', temp1);
     });
 });
 
-app.listen(3000);
+server.listen(3000);
 
 process.on('SIGINT', function() {
     // closing functions here
