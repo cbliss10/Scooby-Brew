@@ -1,21 +1,25 @@
 <%- include('includes/head.ejs') %>
+<script src="/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 </head>
 
 <body>
     <%- include('includes/navigation.ejs') %>
-    <div class="container">
+    <div class="container d-flex justify-content-center" id="app">
         <div class="card-deck text-center mt-4">
             <div class="card" style="width: 18rem;">
-                <h2 class="m-4">Hot Liquor Tank</h2>
+                <div class="bg-dark">
+                    <h2 class="m-4 text-light">Hot Liquor Tank</h2>
+                </div>
                 <h5 class="card-text border-top border-3">Temperature Controller</h5>
                 <div class="border-top">
                     <div class="row">
                         <div class="col d-flex align-items-center">
                             <strong class="mx-2">Current Temp: </strong>
                         </div>
-                        <div class="col d-flex align-items-center justify-content-center">165&deg;F</div>
+                        <div class="col d-flex align-items-center justify-content-center">{{ hlt.currentTemp }}&deg;F</div>
                         <div class="col">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -25,14 +29,19 @@
                             <strong class="mx-2">Set Temp: </strong>
                         </div>
                         <div class="col d-flex align-items-center justify-content-center">
-                            <input class="w-50 text-center" type="text" name="hlt-set-temp" id="" value="165">&deg;F
+                            <input class="w-50px text-center" type="text" name="hlt-set-temp"
+                                v-model="hlt.setTemp">&deg;F
                         </div>
                         <div class="col justify-content-center">
                             <div class="row justify-content-center">
-                                <button class="btn btn-dark w-75" type="button">UP</button>
+                                <div class="col">
+                                    <button class="btn btn-dark w-100" type="button" @click="hltIncrease">UP</button>
+                                </div>
                             </div>
                             <div class="row justify-content-center">
-                                <button class="btn btn-dark w-75" type="button">DOWN</button>
+                                <div class="col">
+                                    <button class="btn btn-dark w-100" type="button" @click="hltDecrease">DOWN</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -40,38 +49,50 @@
                 <div class="border-top">
                     <div class="row">
                         <div class="col">
-                            <button class="btn btn-dark w-100" type="button">Run</button>
+                            <button class="btn w-100" v-bind:class="hlt.run ? 'btn-warning' : 'btn-dark'" type="button" @click="hlt.run = !hlt.run">Run</button>
                         </div>
                         <div class="col">
-                            <button class="btn btn-dark w-100" type="button">On</button>
+                            <button class="btn w-100" v-bind:class="hlt.on ? 'btn-danger' : 'btn-dark'" type="button" @click="hlt.on = !hlt.on">On</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="text-center">Power Level: {{ hlt.powerLevel }}%</h5>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card" style="width: 18rem;">
-                <h2 class="m-4">Mash Tun</h2>
+                <div class="bg-dark">
+                    <h2 class="m-4 text-light">Mash Tun</h2>
+                </div>
                 <h5 class="card-text border-top border-3">Temperature Controller</h5>
                 <div class="border-top">
                     <div class="row">
                         <div class="col d-flex align-items-center">
                             <strong class="mx-2">Current Temp: </strong>
                         </div>
-                        <div class="col d-flex align-items-center justify-content-center">165&deg;F</div>
+                        <div class="col d-flex align-items-center justify-content-center">{{ mash.currentTemp }}&deg;F</div>
                         <div class="col">
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card" style="width: 18rem;">
-                <h2 class="m-4">Boil Kettle</h2>
+                <div class="bg-dark">
+                    <h2 class="m-4 text-light">Boil Kettle</h2>
+                </div>
                 <h5 class="card-text border-top border-3">Temperature Controller</h5>
                 <div class="border-top">
                     <div class="row">
                         <div class="col d-flex align-items-center">
                             <strong class="mx-2">Current Temp: </strong>
                         </div>
-                        <div class="col d-flex align-items-center justify-content-center">165&deg;F</div>
+                        <div class="col d-flex align-items-center justify-content-center">{{ boilKettle.currentTemp }}&deg;F
+                        </div>
                         <div class="col">
                             <!-- empty -->
                         </div>
@@ -83,14 +104,21 @@
                             <strong class="mx-2">Set Temp: </strong>
                         </div>
                         <div class="col d-flex align-items-center justify-content-center">
-                            <input class="w-50 text-center" type="text" name="hlt-set-temp" id="" value="165">&deg;F
+                            <input class="w-50px text-center" type="text" name="boil-kettle-set-temp"
+                                v-model="boilKettle.setTemp">&deg;F
                         </div>
-                        <div class="col">
+                        <div class="col justify-content-center">
                             <div class="row justify-content-center">
-                                <button class="btn btn-dark w-75" type="button">UP</button>
+                                <div class="col">
+                                    <button class="btn btn-dark w-100" type="button"
+                                        @click="boilKettleIncrease">UP</button>
+                                </div>
                             </div>
                             <div class="row justify-content-center">
-                                <button class="btn btn-dark w-75" type="button">DOWN</button>
+                                <div class="col">
+                                    <button class="btn btn-dark w-100" type="button"
+                                        @click="boilKettleDecrease">DOWN</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -98,14 +126,22 @@
                 <div class="border-top">
                     <div class="row">
                         <div class="col">
-                            <button class="btn btn-dark w-100" type="button">Run</button>
+                            <button class="btn w-100" v-bind:class="boilKettle.run ? 'btn-warning' : 'btn-dark'" type="button" @click="boilKettle.run = !boilKettle.run">Run</button>
                         </div>
                         <div class="col">
-                            <button class="btn btn-dark w-100" type="button">On</button>
+                            <button class="btn w-100" v-bind:class="boilKettle.on ? 'btn-danger' : 'btn-dark'" type="button" @click="boilKettle.on = !boilKettle.on">On</button>
+                        </div>
+                    </div>
+                </div>                
+                <div class="border-top">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="text-center">Power Level: {{ boilKettle.powerLevel }}%</h5>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script src="/js/sensor-sockets.js"></script>
     <%- include('includes/end.ejs') %>

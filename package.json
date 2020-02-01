@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "sudo nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -32,10 +32,12 @@
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "jquery": "^3.4.1",
+    "node-pid-controller": "^1.0.1",
     "pigpio": "^2.0.1",
     "popper.js": "^1.16.0",
     "pug": "^2.0.4",
     "socket.io": "^2.3.0",
+    "vue": "^2.6.11",
     "ws": "^7.2.1"
   }
 }

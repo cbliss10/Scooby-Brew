@@ -3,14 +3,17 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+io = require('socket.io')(server);
+pid = require('node-pid-controller');
 //const control = require(path.join(__dirname, 'scripts', 'controller.js'));
 
 const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 const fs = require('fs');
-const Gpio = require('pigpio').Gpio;
-const sensors = require('ds18b20-raspi');
+Gpio = require('pigpio').Gpio;
+hltOutPin = new Gpio(18, {mode: Gpio.OUTPUT});
+boilOutPin = new Gpio(17, {mode: Gpio.OUTPUT});
+sensors = require('ds18b20-raspi');
 
 // global variables
 var initialized = false;
@@ -36,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules', 'bootstrap')));
 app.use(express.static(path.join(__dirname, 'node_modules', 'popper.js')));
 app.use(express.static(path.join(__dirname, 'node_modules', 'jquery')));
+app.use(express.static(path.join(__dirname, 'node_modules', 'vue' )));
 
 app.use('/configure', configRoutes);
 app.use('/brew', brewRoutes);
@@ -49,20 +53,12 @@ app.get('/', (req, res, next) => {
 
 app.use(errorController.get404);
 
-io.on('connection', function (socket) {
-    let i = 1;
-    socket.emit('consoleMessage', 'Socket.io connected.');
-    socket.on('requestData', function(){
-       // console.log("Data request " + i);
-        //i++;
-        let temp1 = sensors.readF(initList[0]);
-        socket.emit('sensor1', temp1);
-    });
-});
-
 server.listen(3000);
 
 process.on('SIGINT', function() {
     // closing functions here
+    console.log("Exiting ...");
+    hltOutPin.digitalWrite(0);
+    boilOutPin.digitalWrite(0);
     process.exit();
 })
