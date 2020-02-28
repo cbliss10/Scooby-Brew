@@ -38,29 +38,29 @@ var app = new Vue({
        },
     },
     mounted: function () {
-        var socket = io();
-        let vm = this;
-        socket.emit("consoleMessage", "Socket started ...")
-        socket.on('consoleMessage', function(data) {
-            console.log(data);
-        });
-        socket.on('data', function(data){
-            // console.log(data);
-            vm.hlt.currentTemp = data.hlt.temp;
-            vm.hlt.powerLevel = Math.round(data.hlt.out/2.55);
-            vm.mash.currentTemp = data.mash.temp;
-            vm.boilKettle.currentTemp = data.boilKettle.temp;
-            vm.boilKettle.powerLevel = Math.round(data.boilKettle.out/2.55);
+        // var socket = io();
+        // let vm = this;
+        // socket.emit("consoleMessage", "Socket started ...")
+        // socket.on('consoleMessage', function(data) {
+        //     console.log(data);
+        // });
+        // socket.on('data', function(data){
+        //     // console.log(data);
+        //     vm.hlt.currentTemp = data.hlt.temp.toFixed(1);
+        //     vm.hlt.powerLevel = Math.round(data.hlt.out/2.55);
+        //     vm.mash.currentTemp = data.mash.temp.toFixed(1);
+        //     vm.boilKettle.currentTemp = data.boilKettle.temp.toFixed(1);
+        //     vm.boilKettle.powerLevel = Math.round(data.boilKettle.out/2.55);
 
-            socket.emit("requestData", {
-                hlt: vm.hlt,
-                boilKettle: vm.boilKettle
-            })
-        });
+        //     socket.emit("requestData", {
+        //         hlt: vm.hlt,
+        //         boilKettle: vm.boilKettle
+        //     })
+        // });
         console.log(vm.hlt.setTemp);
-        socket.emit("requestData", {
-            hlt: vm.hlt,
-            boilKettle: vm.boilKettle
-        });
+        // socket.emit("requestData", {
+        //     hlt: vm.hlt,
+        //     boilKettle: vm.boilKettle
+        // });
     }
 });

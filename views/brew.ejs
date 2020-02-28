@@ -5,9 +5,9 @@
 
 <body>
     <%- include('includes/navigation.ejs') %>
-    <div class="container d-flex justify-content-center" id="app">
+    <div class="d-flex justify-content-center" id="app">
         <div class="card-deck text-center mt-4">
-            <div class="card" style="width: 18rem;">
+            <div class="card">
                 <div class="bg-dark">
                     <h2 class="m-4 text-light">Hot Liquor Tank</h2>
                 </div>
@@ -17,7 +17,7 @@
                         <div class="col d-flex align-items-center">
                             <strong class="mx-2">Current Temp: </strong>
                         </div>
-                        <div class="col d-flex align-items-center justify-content-center">{{ hlt.currentTemp }}&deg;F</div>
+                        <div class="col d-flex align-items-center justify-content-center temp">{{ hlt.currentTemp }}<span class="degree">&deg;F</span></div>
                         <div class="col">
 
                         </div>
@@ -28,8 +28,8 @@
                         <div class="col d-flex align-items-center">
                             <strong class="mx-2">Set Temp: </strong>
                         </div>
-                        <div class="col d-flex align-items-center justify-content-center">
-                            <input class="w-50px text-center" type="text" name="hlt-set-temp"
+                        <div class="col d-flex align-items-center justify-content-center degree">
+                            <input class="w-50px text-center temp" type="text" name="hlt-set-temp"
                                 v-model="hlt.setTemp">&deg;F
                         </div>
                         <div class="col justify-content-center">
@@ -49,10 +49,10 @@
                 <div class="border-top">
                     <div class="row">
                         <div class="col">
-                            <button class="btn w-100" v-bind:class="hlt.run ? 'btn-warning' : 'btn-dark'" type="button" @click="hlt.run = !hlt.run">Run</button>
+                            <button class="btn w-100" v-bind:class="hlt.on ? 'btn-danger' : 'btn-dark'" type="button" @click="hlt.on = !hlt.on">On</button>
                         </div>
                         <div class="col">
-                            <button class="btn w-100" v-bind:class="hlt.on ? 'btn-danger' : 'btn-dark'" type="button" @click="hlt.on = !hlt.on">On</button>
+                            <button class="btn w-100" v-bind:class="hlt.run ? 'btn-warning' : 'btn-dark'" type="button" @click="hlt.run = !hlt.run">Run</button>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card" style="width: 18rem;">
+            <div class="card">
                 <div class="bg-dark">
                     <h2 class="m-4 text-light">Mash Tun</h2>
                 </div>
@@ -81,7 +81,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card" style="width: 18rem;">
+            <div class="card">
                 <div class="bg-dark">
                     <h2 class="m-4 text-light">Boil Kettle</h2>
                 </div>
@@ -110,13 +110,13 @@
                         <div class="col justify-content-center">
                             <div class="row justify-content-center">
                                 <div class="col">
-                                    <button class="btn btn-dark w-100" type="button"
+                                    <button class="btn btn-dark btn-block" type="button"
                                         @click="boilKettleIncrease">UP</button>
                                 </div>
                             </div>
                             <div class="row justify-content-center">
                                 <div class="col">
-                                    <button class="btn btn-dark w-100" type="button"
+                                    <button class="btn btn-dark btn-block" type="button"
                                         @click="boilKettleDecrease">DOWN</button>
                                 </div>
                             </div>
@@ -126,10 +126,10 @@
                 <div class="border-top">
                     <div class="row">
                         <div class="col">
-                            <button class="btn w-100" v-bind:class="boilKettle.run ? 'btn-warning' : 'btn-dark'" type="button" @click="boilKettle.run = !boilKettle.run">Run</button>
+                            <button class="btn btn-block" v-bind:class="boilKettle.on ? 'btn-danger' : 'btn-dark'" type="button" @click="boilKettle.on = !boilKettle.on">On</button>
                         </div>
                         <div class="col">
-                            <button class="btn w-100" v-bind:class="boilKettle.on ? 'btn-danger' : 'btn-dark'" type="button" @click="boilKettle.on = !boilKettle.on">On</button>
+                            <button class="btn btn-block" v-bind:class="boilKettle.run ? 'btn-warning' : 'btn-dark'" type="button" @click="boilKettle.run = !boilKettle.run">Run</button>
                         </div>
                     </div>
                 </div>                

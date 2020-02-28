@@ -1,4 +1,21 @@
-exports.getBrew = (req, res, next) => {
+//const io = require('socket.io')(exports.server);
+const pid = require('node-pid-controller');
+//config
+//const config = require('./config');
+
+const Gpio = require('pigpio').Gpio;
+const hltOutPin = new Gpio(18, {mode: Gpio.OUTPUT});
+const boilOutPin = new Gpio(17, {mode: Gpio.OUTPUT});
+const sensors = require('ds18b20-raspi');
+
+module.exports.getBrew = (req, res, next) => {
+
+    console.log(req.config);
+
+    if(req.config.configured == false)
+    {
+        res.redirect('/configure');
+    }
 
     //const sensors = require('ds18b20-raspi');
     const hltCtr = new pid(2, .1, .1);
@@ -33,7 +50,7 @@ exports.getBrew = (req, res, next) => {
     }
 
     // GPIO initialization
-    const initList = sensors.list();
+    /*const initList = sensors.list();
     hltOutPin.digitalWrite(0);
     boilOutPin.digitalWrite(0);
 
@@ -107,7 +124,7 @@ exports.getBrew = (req, res, next) => {
             console.log(Data);
         });
     });
-
+*/
     res.render('brew.ejs', {
         pageTitle: 'Brew',
         path: '/brew'
