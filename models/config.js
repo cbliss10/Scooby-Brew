@@ -26,6 +26,14 @@ function CheckConfiguration(req) {
     }
 }
 
+function writeConfig() {
+    try{
+        fs.writeFileSync(configPath, JSON.stringify(this.config));
+    }catch(error){
+        console.error(error);
+    };
+}
+
 var loadConfig = function (req, res, next) {
     console.log('Loading configuration...');
     readConfig(req);
@@ -33,20 +41,18 @@ var loadConfig = function (req, res, next) {
     next();
   }
 
-module.exports.loadConfig = loadConfig;
-
-module.exports.readConfig = readConfig;
-
-module.exports.writeConfig = () => {
-    fsPromises.writeFileSync(configPath, JSON.stringify(config))
-    .then(() => {
-        console.log("Configuration updated!");
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+var saveConfig = function(data) {
+    console.log('Saving configuration ...');
+    this.config = data;
+    this.writeConfig();
 }
 
+module.exports.loadConfig = loadConfig;
+module.exports.saveConfig = saveConfig;
+//module.exports.readConfig = readConfig;
+//module.exports.writeConfig = writeConfig;
+
+//default configuration
 let config = {
     configured: false,
     onewireDevices: [],

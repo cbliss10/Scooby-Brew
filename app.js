@@ -23,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'node_modules', 'bootstrap')));
 app.use(express.static(path.join(__dirname, 'node_modules', 'popper.js')));
 app.use(express.static(path.join(__dirname, 'node_modules', 'jquery')));
 app.use(express.static(path.join(__dirname, 'node_modules', 'vue' )));
+app.use(express.static(path.join(__dirname, 'public', 'scooby-vue', 'dist', 'js' )));
 
 app.use(config.loadConfig);
 app.use('/configure', configRoutes);
@@ -42,7 +43,5 @@ server.listen(3000);
 process.on('SIGINT', function() {
     // closing functions here
     console.log("Exiting ...");
-    hltOutPin.digitalWrite(0);
-    boilOutPin.digitalWrite(0);
     process.exit();
 })
