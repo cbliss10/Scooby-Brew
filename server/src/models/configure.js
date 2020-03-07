@@ -39,9 +39,10 @@ function CheckConfiguration(req) {
         req.config.onewireDevices = initList
     }
 }
-function writeConfig() {
+function writeConfig(data) {
     try{
-        fs.writeFileSync(configPath, JSON.stringify(this.config));
+        console.log(data)
+        fs.writeFileSync(configPath, JSON.stringify(data));
     }catch(error){
         console.error(error);
     };
@@ -54,19 +55,22 @@ var loadConfig = function (req, res, next) {
 }
 var saveConfig = function(data) {
     console.log('Saving configuration ...');
-    this.config = data;
-    writeConfig();
+    console.log(data);
+    writeConfig(data);
 }
 module.exports.loadConfig = loadConfig;
 module.exports.saveConfig = saveConfig;
 //module.exports.readConfig = readConfig;
 //module.exports.writeConfig = writeConfig;
 
+const controllers = require('../models/controller');
+
 //default configuration
 let config = {
     configured: false,
     onewireDevices: [],
-    equipment: [],
+    controlLoops: [],
+    outputPins: [18, 17]
 }
 
 module.exports.config = config;

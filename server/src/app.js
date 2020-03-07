@@ -8,6 +8,7 @@ const configController = require('./controllers/configure');
 const app = express()
 app.use(config.loadConfig)
 app.use(morgan('combined'))
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(cors())
 

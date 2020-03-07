@@ -5,8 +5,11 @@ exports.getConfig = (req, res) => {
 
 exports.postConfig = (req, res, next) => {
     // handle new data
-    let data = req.config;
+    //console.log(req);
+    let data = req.body;
+    console.log("request body: " + JSON.stringify(req.body))
     config.saveConfig(data)
+    res.send('Success!')
 }
 
 exports.getData = (req, res, next) => {
