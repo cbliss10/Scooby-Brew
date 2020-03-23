@@ -7,13 +7,7 @@ exports.postConfig = (req, res, next) => {
     // handle new data
     //console.log(req);
     let data = req.body;
-    console.log("request body: " + JSON.stringify(req.body))
+    //console.log("request body: " + JSON.stringify(req.body))
     config.saveConfig(data)
     res.send('Success!')
-}
-
-exports.getData = (req, res, next) => {
-    // handle new data
-
-    res.status(200).json(req.config);
 }
