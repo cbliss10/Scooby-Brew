@@ -27,7 +27,7 @@
     "cors": "^2.8.5",
     "ds18b20-raspi": "^0.3.4",
     "express": "^4.17.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "morgan": "^1.9.1",
     "node-pid-controller": "^1.0.1",
     "pigpio": "^3.0.0",
