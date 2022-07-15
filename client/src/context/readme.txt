@@ -1,0 +1,1 @@
+This directory was made in case it is decided it's desireable to seperate out websocket functions.  If not, feel free to delete.
