@@ -18,7 +18,7 @@ const testInitialControllers: BrewController[] = [
   },
 ];
 
-export const ConfigPage = function () {
+export const ConfigPage = function() {
   const [brewControllers, setBrewControllers] = useState<BrewController[]>(
     testInitialControllers
   );
@@ -36,7 +36,7 @@ export const ConfigPage = function () {
 
   function getControllers() {
     if (socket !== undefined && status === "Connected") {
-      socket.emit("controller:list", (res) => {
+      socket.emit("controller:list", "test", (res) => {
         if ("error" in res) {
           console.log(res.error);
         } else {

@@ -30,8 +30,9 @@ export function ControllerModal({
   closeModal,
 }: Props) {
   const { socket, status } = useContext(WebSocketContext);
-  const [saveController, setSaveController] =
-    useState<BrewController>(initialController);
+  const [saveController, setSaveController] = useState<BrewController>(
+    initialController
+  );
   const [sensorAddresses, setSensorAddresses] = useState<string[]>([]);
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export function ControllerModal({
   function getSensors() {
     if (socket !== undefined && status === "Connected") {
       console.log("trying to get sensors");
-      socket.emit("sensor:getAll", (res) => {
+      socket.emit("sensor:getAll", "test", (res) => {
         if ("error" in res) {
           console.log(res.error);
         } else {
