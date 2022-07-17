@@ -68,13 +68,13 @@ export const RegisterBreweryHandlers = (
 
   const getSensors = async (
     payload: any,
-    callback: (res: Response<string[]>) => void
+    acknowledgement: (res: Response<string[]>) => void
   ) => {
     try {
       const ids = await GetAvailableSensors();
-      callback({ data: ids });
+      acknowledgement({ data: ids });
     } catch (err) {
-      callback({ error: sanitizeErrorMessage(err) });
+      acknowledgement({ error: sanitizeErrorMessage(err) });
     }
   };
 
