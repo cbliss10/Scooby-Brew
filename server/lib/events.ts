@@ -23,32 +23,35 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
+  // CRUD controllers
   "controller:list": (
     payload: any,
-    callback: (res: Response<BrewController[]>) => void
+    acknowledgement: (res: Response<BrewController[]>) => void
   ) => void;
   "controller:update": (
     controllers: BrewController,
-    callback: (res?: Response<void>) => void
+    acknowledgement: (res?: Response<void>) => void
   ) => void;
   "controller:add": (
     controllers: Omit<BrewController, "id">,
-    callback: (res?: Response<void>) => void
+    acknowledgement: (res?: Response<void>) => void
   ) => void;
   "controller:delete": (
     controllerId: string,
-    callback: (res?: Response<void>) => void
-  ) => void;
-  "brew:adjust": (
-    adjustmentData: PowerLevelAdjustmentData,
-    callback: (res?: Response<PowerLevelAdjustmentData>) => void
-  ) => void;
-  "brew:start": (
-    data: string,
-    callback: (res?: Response<BrewController[]>) => void
+    acknowledgement: (res?: Response<void>) => void
   ) => void;
   "sensor:getAll": (
     payload: any,
-    callback: (res: Response<string[]>) => void
+    acknowledgement: (res: Response<string[]>) => void
+  ) => void;
+
+  // Brewing events
+  "brew:adjust": (
+    adjustmentData: PowerLevelAdjustmentData,
+    acknowledgement: (res?: Response<PowerLevelAdjustmentData>) => void
+  ) => void;
+  "brew:start": (
+    payload: any,
+    acknowledgement: (res?: Response<BrewController[]>) => void
   ) => void;
 }

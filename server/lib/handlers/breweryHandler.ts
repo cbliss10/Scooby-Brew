@@ -5,7 +5,10 @@ import {
   ServerToClientEvents,
   Response,
 } from "../events";
-import { BrewController } from "../models/controllerModels";
+import {
+  BrewController,
+  PowerLevelAdjustmentData,
+} from "../models/controllerModels";
 import { InitializeRepository } from "../repositories/breweryRepository";
 import { GetAvailableSensors } from "../services/sensorService";
 import { sanitizeErrorMessage } from "../util";
@@ -75,7 +78,28 @@ export const RegisterBreweryHandlers = (
     }
   };
 
-  socket.on("brew:start", startBrewery);
+  const makeAdjustment = async (
+    payload: PowerLevelAdjustmentData,
+    acknowledgement: (res: Response<PowerLevelAdjustmentData>) => void
+  ) => {
+    try {
+      console.log(`Setting power to ${payload.powerLevel}`);
+      const response = await repository.SetControllerPower(payload);
+      return acknowledgement({
+        data: response,
+      });
+    } catch (err) {
+      return acknowledgement({
+        error: sanitizeErrorMessage(err),
+      });
+    }
+  };
+
+  //crud
   socket.on("controller:list", getControllerList);
   socket.on("sensor:getAll", getSensors);
+
+  //state
+  socket.on("brew:start", startBrewery);
+  socket.on("brew:adjust", makeAdjustment);
 };
