@@ -6,8 +6,8 @@ import { RegisterBreweryHandlers } from "./handlers/breweryHandler";
 const httpServer = createServer();
 const serverOptions = {
   cors: {
-    //origin: [/^http:\/\/192.168.1./],
-    origin: "http://localhost:3000",
+    origin: [/^http:\/\/192.168.1./],
+    //origin: "http://localhost:3000",
   },
 };
 

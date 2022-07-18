@@ -4,7 +4,7 @@
     "name": "HLT",
     "description": "This is a test controller",
     "heaterPin": 3,
-    "sensorAddress": "28-0517023ae9ff\r",
+    "sensorAddress": "aaaaaa",
     "temperature": 194,
     "powerLevel": 4
   },
@@ -13,7 +13,7 @@
     "name": "Mash Tun",
     "description": "The pot that starch to sugar conversion occurs in.",
     "heaterPin": -1,
-    "sensorAddress": "28-0517023ae9ae",
+    "sensorAddress": "bbbbbb",
     "temperature": 137,
     "powerLevel": 7
   },
@@ -22,7 +22,7 @@
     "name": "New controller",
     "description": "",
     "heaterPin": -1,
-    "sensorAddress": "28-0517023ae9ff",
+    "sensorAddress": "cccccc",
     "temperature": 137,
     "powerLevel": 0
   }

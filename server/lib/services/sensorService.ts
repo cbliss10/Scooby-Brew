@@ -19,8 +19,7 @@ function GetAvailableSensors() {
 
 function GetTemperature(sensorAddress: string) {
   return new Promise<number>((resolve, reject) => {
-    if (isTestMode) return resolve(0);
-    ds18b20.temperature(sensorAddress, (err, temp) => {
+    service.temperature(sensorAddress, (err, temp) => {
       if (err) {
         console.log(err);
         return reject(err);
