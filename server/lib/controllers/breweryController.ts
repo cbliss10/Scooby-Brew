@@ -1,4 +1,3 @@
-import { Module } from "module";
 import { Server, Socket } from "socket.io";
 import {
   ClientToServerEvents,
@@ -9,16 +8,16 @@ import {
   BrewController,
   PowerLevelAdjustmentData,
 } from "../models/controllerModels";
-import { InitializeRepository } from "../repositories/breweryRepository";
 import { GetAvailableSensors } from "../services/sensorService";
 import { sanitizeErrorMessage } from "../util";
+import { BreweryRepositoryContract } from "../repositories/breweryRepository";
 
 let isActive = false;
-const repository = InitializeRepository();
 
 export const RegisterBreweryHandlers = (
   io: Server<ClientToServerEvents, ServerToClientEvents>,
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>
+  socket: Socket<ClientToServerEvents, ServerToClientEvents>,
+  repository: BreweryRepositoryContract
 ) => {
   const startBrewery = async (
     payload: any,
@@ -95,6 +94,10 @@ export const RegisterBreweryHandlers = (
     }
   };
 
+  const shutdownRepository = (): void => {
+    repository.EmergencyShutdown();
+  };
+
   //crud
   socket.on("controller:list", getControllerList);
   socket.on("sensor:getAll", getSensors);
@@ -102,4 +105,5 @@ export const RegisterBreweryHandlers = (
   //state
   socket.on("brew:start", startBrewery);
   socket.on("brew:adjust", makeAdjustment);
+  //socket.on("disconnect", shutdownRepository);
 };

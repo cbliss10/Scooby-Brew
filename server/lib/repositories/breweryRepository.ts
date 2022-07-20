@@ -8,12 +8,35 @@ import {
 import * as path from "path";
 import * as fs from "fs/promises";
 import { GetTemperature } from "../services/sensorService";
+import { ControllerStateController } from "../controllers/controllerStateController";
 
 let testDirection: "Up" | "Down" = "Up";
 
-class ControllerRepository {
+export interface BreweryRepositoryContract {
+  InitializeControllers: () => Promise<BrewController[]>;
+  UpdateController: (updatedController: BrewController) => Promise<void>;
+  GetControllers: () => Promise<BrewController[]>;
+  SetControllerPower: (
+    controllerPower: PowerLevelAdjustmentData
+  ) => Promise<PowerLevelAdjustmentData>;
+  GetControllerStates: () => Promise<UpdateDto[]>;
+  DeleteController: (controllerId: ControllerId) => Promise<void>;
+  AddController: (newController: Omit<BrewController, "id">) => Promise<void>;
+  EmergencyShutdown: () => void;
+}
+
+class BreweryRepository implements BreweryRepositoryContract {
+  PowerOff() {
+    //throw new Error("Method not implemented.");
+    console.log("Power off method not yet implemented.");
+  }
   private readonly controllers: Map<ControllerId, BrewControllerState> =
     new Map();
+
+  private readonly controllerStateControllers: Map<
+    ControllerId,
+    ControllerStateController
+  > = new Map();
 
   private readonly filePath = path.join(__dirname, "Controllers.json");
 
@@ -29,6 +52,12 @@ class ControllerRepository {
           ...newController,
           ...controller,
         });
+        const newControllerStateController = new ControllerStateController();
+        newControllerStateController.SetController(controller);
+        this.controllerStateControllers.set(
+          controller.id,
+          newControllerStateController
+        );
       });
       return Promise.resolve();
     } catch (e) {
@@ -52,6 +81,9 @@ class ControllerRepository {
     try {
       this.controllers.forEach(async (controller) => {
         controller.temperature = await GetTemperature(controller.sensorAddress);
+      });
+      this.controllerStateControllers.forEach((controller) => {
+        controller.GetTemperature();
       });
       return Promise.resolve();
     } catch (err) {
@@ -168,9 +200,13 @@ class ControllerRepository {
     }
     return Promise.reject();
   }
+
+  EmergencyShutdown(): void {
+    console.log("Shutting down");
+  }
 }
 
-export const InitializeRepository = () => {
-  const repository = new ControllerRepository();
+export const InitializeRepository = (): BreweryRepositoryContract => {
+  const repository = new BreweryRepository();
   return repository;
 };

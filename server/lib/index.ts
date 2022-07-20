@@ -1,7 +1,8 @@
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import { ClientToServerEvents, ServerToClientEvents } from "./events";
-import { RegisterBreweryHandlers } from "./handlers/breweryHandler";
+import { RegisterBreweryHandlers } from "./controllers/breweryController";
+import { InitializeRepository } from "./repositories/breweryRepository";
 
 const httpServer = createServer();
 const serverOptions = {
@@ -16,10 +17,28 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(
   serverOptions
 );
 
+const repository = InitializeRepository();
+
+let clientCount = 0;
+
 const onConnection = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>
 ) => {
-  RegisterBreweryHandlers(io, socket);
+  clientCount++;
+
+  RegisterBreweryHandlers(io, socket, repository);
+
+  socket.on("disconnect", () => {
+    clientCount--;
+    console.log(clientCount);
+    if (clientCount < 1) {
+      console.log("emergency shutdown in 30 seconds.");
+      setTimeout(() => {
+        console.log("starting emergency shutdown.");
+        repository.EmergencyShutdown();
+      }, 30000);
+    }
+  });
 };
 
 io.on("connection", onConnection);
