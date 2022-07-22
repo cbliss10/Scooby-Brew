@@ -9,6 +9,7 @@ import * as path from "path";
 import * as fs from "fs/promises";
 import { GetTemperature } from "../services/sensorService";
 import { ControllerStateController } from "../controllers/controllerStateController";
+import * as controllerService from "../services/controllerService";
 
 let testDirection: "Up" | "Down" = "Up";
 
@@ -52,12 +53,12 @@ class BreweryRepository implements BreweryRepositoryContract {
           ...newController,
           ...controller,
         });
-        const newControllerStateController = new ControllerStateController();
-        newControllerStateController.SetController(controller);
-        this.controllerStateControllers.set(
-          controller.id,
-          newControllerStateController
-        );
+        // const newControllerStateController = new ControllerStateController();
+        // newControllerStateController.SetController(controller);
+        // this.controllerStateControllers.set(
+        //   controller.id,
+        //   newControllerStateController
+        // );
       });
       return Promise.resolve();
     } catch (e) {
@@ -79,11 +80,12 @@ class BreweryRepository implements BreweryRepositoryContract {
   private async UpdateStates(): Promise<void> {
     // get controller temperature and set pwm powerLevel here
     try {
+      const self = this;
       this.controllers.forEach(async (controller) => {
-        controller.temperature = await GetTemperature(controller.sensorAddress);
-      });
-      this.controllerStateControllers.forEach((controller) => {
-        controller.GetTemperature();
+        const updatedController = await controllerService.UpdateController(
+          controller
+        );
+        self.controllers.set(controller.id, updatedController);
       });
       return Promise.resolve();
     } catch (err) {

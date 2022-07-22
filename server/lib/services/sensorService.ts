@@ -24,7 +24,6 @@ function GetTemperature(sensorAddress: string) {
         console.log(err);
         return reject(err);
       }
-      console.log(temp);
       return resolve(temp);
     });
   });
