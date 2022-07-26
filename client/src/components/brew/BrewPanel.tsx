@@ -1,15 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import {
-  BrewController,
+  BrewtrollerState,
   ControllerTemperature,
-  PowerLevelAdjustmentData,
-} from "../../../../server/lib/models/controllerModels";
+  AdjustmentData,
+} from "../../../../server/lib/models/brewtrollerModels";
 import { WebSocketContext } from "../../context/websocketContext";
 import { PowerLevelComponent } from "./HeatControl";
 import { TemperatureDisplay } from "./TempDisplay";
 
 interface Props {
-  controller: BrewController;
+  controller: BrewtrollerState;
 }
 
 export function BrewPanel(props: Props) {
@@ -52,17 +52,15 @@ export function BrewPanel(props: Props) {
   };
 
   const adjustPowerLevel = (adjustment: number) => {
-    const powerAdjustmentDto: PowerLevelAdjustmentData = {
-      id: controller.id,
+    const adjustmentDto: AdjustmentData = {
+      ...controller,
       powerLevel,
     };
-    powerAdjustmentDto.powerLevel += adjustment;
-    if (powerAdjustmentDto.powerLevel > 100)
-      powerAdjustmentDto.powerLevel = 100;
-    else if (powerAdjustmentDto.powerLevel < 0)
-      powerAdjustmentDto.powerLevel = 0;
+    adjustmentDto.powerLevel += adjustment;
+    if (adjustmentDto.powerLevel > 100) adjustmentDto.powerLevel = 100;
+    else if (adjustmentDto.powerLevel < 0) adjustmentDto.powerLevel = 0;
     if (socket !== undefined) {
-      socket.emit("brew:adjust", powerAdjustmentDto, (res) => {
+      socket.emit("brew:adjust", adjustmentDto, (res) => {
         if (res !== undefined) {
           if ("error" in res) {
             console.log(res.error);

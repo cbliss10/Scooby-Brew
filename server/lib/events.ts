@@ -1,11 +1,9 @@
 import { ValidationErrorItem } from "joi";
 import {
-  BrewController,
-  BrewControllerState,
-  ControllerId,
-  PowerLevelAdjustmentData,
-  UpdateDto,
-} from "./models/controllerModels";
+  AdjustmentData,
+  Brewtroller,
+  BrewtrollerState,
+} from "./models/brewtrollerModels";
 
 interface Success<T> {
   data: T;
@@ -19,21 +17,21 @@ interface Error {
 export type Response<T> = Error | Success<T>;
 
 export interface ServerToClientEvents {
-  "brew:update": (state: UpdateDto[]) => void;
+  "brew:update": (state: BrewtrollerState[]) => void;
 }
 
 export interface ClientToServerEvents {
   // CRUD controllers
   "controller:list": (
     payload: any,
-    acknowledgement: (res: Response<BrewController[]>) => void
+    acknowledgement: (res: Response<Brewtroller[]>) => void
   ) => void;
   "controller:update": (
-    controllers: BrewController,
+    controllers: Brewtroller,
     acknowledgement: (res?: Response<void>) => void
   ) => void;
   "controller:add": (
-    controllers: Omit<BrewController, "id">,
+    controllers: Omit<Brewtroller, "id">,
     acknowledgement: (res?: Response<void>) => void
   ) => void;
   "controller:delete": (
@@ -47,11 +45,15 @@ export interface ClientToServerEvents {
 
   // Brewing events
   "brew:adjust": (
-    adjustmentData: PowerLevelAdjustmentData,
-    acknowledgement: (res?: Response<PowerLevelAdjustmentData>) => void
+    adjustmentData: AdjustmentData,
+    acknowledgement: (res?: Response<BrewtrollerState>) => void
   ) => void;
   "brew:start": (
     payload: any,
-    acknowledgement: (res?: Response<BrewController[]>) => void
+    acknowledgement: (res?: Response<BrewtrollerState[]>) => void
+  ) => void;
+  "brew:stop": (
+    payload: any,
+    acknowledgement: (res?: Response<BrewtrollerState[]>) => void
   ) => void;
 }

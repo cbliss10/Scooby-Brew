@@ -7,8 +7,8 @@ import { InitializeRepository } from "./repositories/breweryRepository";
 const httpServer = createServer();
 const serverOptions = {
   cors: {
-    origin: [/^http:\/\/192.168.1./],
-    //origin: "http://localhost:3000",
+    //origin: [/^http:\/\/192.168.1./],
+    origin: "http://localhost:3000",
   },
 };
 
@@ -26,17 +26,16 @@ const onConnection = (
 ) => {
   clientCount++;
 
-  RegisterBreweryHandlers(io, socket, repository);
+  const shutdown = RegisterBreweryHandlers(io, socket, repository);
 
   socket.on("disconnect", () => {
     clientCount--;
-    console.log(clientCount);
     if (clientCount < 1) {
-      console.log("emergency shutdown in 30 seconds.");
+      console.log("emergency shutdown in 5 seconds.");
       setTimeout(() => {
-        console.log("starting emergency shutdown.");
-        repository.EmergencyShutdown();
-      }, 30000);
+        console.log("Shutting down");
+        shutdown(null, () => {});
+      }, 5000);
     }
   });
 };

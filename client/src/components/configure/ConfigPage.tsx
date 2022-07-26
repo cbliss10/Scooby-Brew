@@ -1,14 +1,14 @@
 // import { stat } from "fs";
 import { useContext, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import { BrewController } from "../../../../server/lib/models/controllerModels";
+import { Brewtroller } from "../../../../server/lib/models/brewtrollerModels";
 import { WebSocketContext } from "../../context/websocketContext";
 // import Spinner from "../common/Spinner";
 import Spinner from "../common/Spinner";
 import { ControllerModal } from "./ControllerModal";
 import { ControllerPanel } from "./ControllersPanel";
 
-const testInitialControllers: BrewController[] = [
+const testInitialControllers: Brewtroller[] = [
   {
     id: "test",
     name: "name",
@@ -18,13 +18,13 @@ const testInitialControllers: BrewController[] = [
   },
 ];
 
-export const ConfigPage = function() {
-  const [brewControllers, setBrewControllers] = useState<BrewController[]>(
+export const ConfigPage = function () {
+  const [brewControllers, setBrewControllers] = useState<Brewtroller[]>(
     testInitialControllers
   );
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [selectedController, setSelectedController] = useState<
-    BrewController | undefined
+    Brewtroller | undefined
   >(undefined);
   const [isNew, setIsNew] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -47,7 +47,7 @@ export const ConfigPage = function() {
     }
   }
 
-  function deleteController(controller: BrewController) {
+  function deleteController(controller: Brewtroller) {
     if (
       window.confirm(
         `Are you sure you would like to delete controller ${controller.name}`
@@ -63,17 +63,17 @@ export const ConfigPage = function() {
   }
 
   function addOrUpdateController(
-    controller: BrewController | Omit<BrewController, "id">,
+    controller: Brewtroller | Omit<Brewtroller, "id">,
     isNew: boolean
   ) {
     if (socket !== undefined) {
       if (isNew) {
-        const addController = controller as Omit<BrewController, "id">;
+        const addController = controller as Omit<Brewtroller, "id">;
         socket.emit("controller:add", addController, (res) => {
           console.log(res);
         });
       } else {
-        const updateController = controller as BrewController;
+        const updateController = controller as Brewtroller;
         socket.emit("controller:update", updateController, (res) => {
           console.log(res);
         });
@@ -82,7 +82,7 @@ export const ConfigPage = function() {
     }
   }
 
-  function editController(controller: BrewController) {
+  function editController(controller: Brewtroller) {
     console.log("updateController");
     setSelectedController(controller);
     setIsNew(false);

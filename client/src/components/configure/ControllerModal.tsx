@@ -1,20 +1,20 @@
 import { useContext, useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { BrewController } from "../../../../server/lib/models/controllerModels";
+import { Brewtroller } from "../../../../server/lib/models/brewtrollerModels";
 import { WebSocketContext } from "../../context/websocketContext";
 
 interface Props {
-  controller: BrewController | undefined;
+  controller: Brewtroller | undefined;
   show: boolean;
   isNew: boolean;
   onSubmit: (
-    controller: BrewController | Omit<BrewController, "id">,
+    controller: Brewtroller | Omit<Brewtroller, "id">,
     isNew: boolean
   ) => void;
   closeModal: () => void;
 }
 
-const initialController: BrewController = {
+const initialController: Brewtroller = {
   id: "noid",
   name: "New controller",
   sensorAddress: "NA",
@@ -30,9 +30,8 @@ export function ControllerModal({
   closeModal,
 }: Props) {
   const { socket, status } = useContext(WebSocketContext);
-  const [saveController, setSaveController] = useState<BrewController>(
-    initialController
-  );
+  const [saveController, setSaveController] =
+    useState<Brewtroller>(initialController);
   const [sensorAddresses, setSensorAddresses] = useState<string[]>([]);
 
   useEffect(() => {

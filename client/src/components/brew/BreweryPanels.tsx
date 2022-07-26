@@ -3,11 +3,11 @@ import {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "../../../../server/lib/events";
-import { BrewController } from "../../../../server/lib/models/controllerModels";
+import { BrewtrollerState } from "../../../../server/lib/models/brewtrollerModels";
 import { BrewPanel } from "./BrewPanel";
 
 interface BreweryPanelProps {
-  brewControllers: BrewController[];
+  brewControllers: BrewtrollerState[];
 }
 
 export function BreweryPanels(props: BreweryPanelProps) {

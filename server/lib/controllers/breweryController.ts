@@ -5,14 +5,20 @@ import {
   Response,
 } from "../events";
 import {
-  BrewController,
+  AdjustmentData,
+  Brewtroller,
+  BrewtrollerState,
   PowerLevelAdjustmentData,
-} from "../models/controllerModels";
+} from "../models/brewtrollerModels";
 import { GetAvailableSensors } from "../services/sensorService";
 import { sanitizeErrorMessage } from "../util";
 import { BreweryRepositoryContract } from "../repositories/breweryRepository";
+import * as brewtrollerService from "../services/brewtrollerService";
 
 let isActive = false;
+let updateInterval = 1;
+let updateIntervalTimer: NodeJS.Timer | null = null;
+let status: "On" | "Off" = "Off";
 
 export const RegisterBreweryHandlers = (
   io: Server<ClientToServerEvents, ServerToClientEvents>,
@@ -21,16 +27,22 @@ export const RegisterBreweryHandlers = (
 ) => {
   const startBrewery = async (
     payload: any,
-    callback: (res?: Response<BrewController[]>) => void
+    callback: (res?: Response<BrewtrollerState[]>) => void
   ) => {
     try {
       if (!isActive) {
-        const result = await repository.InitializeControllers();
-        setInterval(runUpdates, 2000);
+        // test
+
         isActive = true;
+        StartUpdateLoop();
+
+        // end test
+
+        const result = await repository.InitializeControllers();
+        //setInterval(runUpdates, 2000);
         callback({ data: result });
       } else {
-        const result = await repository.GetControllers();
+        const result = repository.BrewtrollerStates();
         callback({ data: result });
       }
     } catch (err) {
@@ -40,24 +52,24 @@ export const RegisterBreweryHandlers = (
     }
   };
 
-  const runUpdates = async function () {
-    try {
-      const stateMap = await repository.GetControllerStates();
-      io.emit("brew:update", stateMap);
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
+  const StopBrewery = async (
+    payload: any,
+    callback: (res?: Response<BrewtrollerState[]>) => void
+  ) => {
+    StopUpdateLoop();
+    ShutdownBrewery();
+    isActive = false;
   };
 
   const getControllerList = async (
     payload: any,
-    callback: (res: Response<BrewController[]>) => void
+    callback: (res: Response<Brewtroller[]>) => void
   ) => {
     try {
-      callback({
-        data: await repository.GetControllers(),
-      });
+      throw new Error("Not implemented");
+      // callback({
+      //   data: await repository.GetControllers(),
+      // });
     } catch (e) {
       callback({
         error: sanitizeErrorMessage(e),
@@ -78,12 +90,22 @@ export const RegisterBreweryHandlers = (
   };
 
   const makeAdjustment = async (
-    payload: PowerLevelAdjustmentData,
-    acknowledgement: (res: Response<PowerLevelAdjustmentData>) => void
+    payload: AdjustmentData,
+    acknowledgement: (res: Response<BrewtrollerState>) => void
   ) => {
     try {
       console.log(`Setting power to ${payload.powerLevel}`);
-      const response = await repository.SetControllerPower(payload);
+      const currentBrewtrollerState = repository.GetBrewtrollerState(
+        payload.id
+      );
+      if (currentBrewtrollerState === undefined)
+        throw new Error("Brewtroller not found");
+      const newOb = { ...currentBrewtrollerState, ...payload };
+      const updatedBrewtrollerState = await brewtrollerService.UpdateController(
+        newOb
+      );
+      const response = repository.SetBrewtrollerState(updatedBrewtrollerState);
+      if (response === undefined) throw new Error("Error setting brewtroller");
       return acknowledgement({
         data: response,
       });
@@ -94,8 +116,41 @@ export const RegisterBreweryHandlers = (
     }
   };
 
-  const shutdownRepository = (): void => {
-    repository.EmergencyShutdown();
+  const UpdateLoop = () => {
+    UpdateBrewtrollers();
+    EmitBrewtrollerStates();
+  };
+
+  const UpdateBrewtrollers = () => {
+    repository.BrewtrollerStates().forEach(async (brewtroller) => {
+      repository.SetBrewtrollerState(
+        await brewtrollerService.UpdateController(brewtroller)
+      );
+    });
+  };
+
+  const EmitBrewtrollerStates = async () => {
+    const brewtrollerStates = await repository.BrewtrollerStates();
+    socket.emit("brew:update", brewtrollerStates);
+  };
+
+  const ShutdownBrewery = () => {
+    console.log(repository.BrewtrollerStates().length);
+    repository.BrewtrollerStates().forEach((brewtroller) => {
+      console.log(`Shutting down ${brewtroller.name}`);
+    });
+  };
+
+  const StartUpdateLoop = () => {
+    if (updateIntervalTimer === null)
+      updateIntervalTimer = setInterval(UpdateLoop, 1000);
+  };
+
+  const StopUpdateLoop = () => {
+    if (updateIntervalTimer !== null) {
+      clearInterval(updateIntervalTimer);
+      updateIntervalTimer = null;
+    }
   };
 
   //crud
@@ -104,6 +159,9 @@ export const RegisterBreweryHandlers = (
 
   //state
   socket.on("brew:start", startBrewery);
+  socket.on("brew:stop", StopBrewery);
   socket.on("brew:adjust", makeAdjustment);
   //socket.on("disconnect", shutdownRepository);
+
+  return StopBrewery;
 };

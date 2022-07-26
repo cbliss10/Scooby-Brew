@@ -1,12 +1,12 @@
 import { BreweryPanels } from "./BreweryPanels";
 import { useContext, useEffect, useState } from "react";
 import Spinner from "../common/Spinner";
-import { BrewController } from "../../../../server/lib/models/controllerModels";
+import { BrewtrollerState } from "../../../../server/lib/models/brewtrollerModels";
 import { WebSocketContext } from "../../context/websocketContext";
 
 export const BrewPage = () => {
   const [brewControllers, setBrewControllers] = useState<
-    BrewController[] | undefined
+    BrewtrollerState[] | undefined
   >(undefined);
   const { socket, status } = useContext(WebSocketContext);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);

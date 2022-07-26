@@ -1,11 +1,11 @@
 import { Button } from "react-bootstrap";
-import { BrewController } from "../../../../server/lib/models/controllerModels";
+import { Brewtroller } from "../../../../server/lib/models/brewtrollerModels";
 import { ControllerField } from "./ControllerField";
 
 interface Props {
-  controller: BrewController;
-  deleteController: (controller: BrewController) => void;
-  editController: (controller: BrewController) => void;
+  controller: Brewtroller;
+  deleteController: (controller: Brewtroller) => void;
+  editController: (controller: Brewtroller) => void;
 }
 
 export function ControllerCard({

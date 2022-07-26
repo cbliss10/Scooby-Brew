@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { BrewController } from "../../../../server/lib/models/controllerModels";
+import { Brewtroller } from "../../../../server/lib/models/brewtrollerModels";
 import { ControllerCard } from "./ControllerCard";
 
 interface Props {
-  controllers: BrewController[];
-  deleteController: (controller: BrewController) => void;
-  editController: (controller: BrewController) => void;
+  controllers: Brewtroller[];
+  deleteController: (controller: Brewtroller) => void;
+  editController: (controller: Brewtroller) => void;
 }
 
 export function ControllerPanel({
