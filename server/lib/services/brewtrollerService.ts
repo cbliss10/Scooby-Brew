@@ -22,27 +22,26 @@ export const UpdateController = async (
 ): Promise<BrewtrollerState> => {
   let updatedController: BrewtrollerState = { ...updateRequest };
 
-  switch (updatedController.state) {
-    case "On":
-      updatedController.temperature = await sensorService.GetTemperature(
-        updatedController.sensorAddress
-      );
-      break;
-    case "Off":
-      //updatedController = { ...updatedController, ...defaultController };
-      break;
-    case "PID":
-      break;
-    case "Trip":
-      break;
-
-    default:
-      break;
+  if (updatedController.state === "Off") {
+    updatedController.temperature = "--";
+    updatedController.powerLevel = 0;
+  } else {
+    updatedController.temperature = await sensorService.GetTemperature(
+      updatedController.sensorAddress
+    );
+    if (updatedController.state === "Trip") {
+      if (
+        updatedController.temperature >= updatedController.targetTemperature
+      ) {
+        //updatedController.powerLevel = 0;
+        updatedController.state = "PID";
+      }
+    }
   }
 
-  updatedController.temperature = await sensorService.GetTemperature(
-    updatedController.sensorAddress
-  );
-  updateEmitter.emit("updated", updatedController);
+  // updatedController.temperature = await sensorService.GetTemperature(
+  //   updatedController.sensorAddress
+  // );
+  //updateEmitter.emit("updated", updatedController);
   return updatedController;
 };

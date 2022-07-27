@@ -26,15 +26,24 @@ const onConnection = (
 ) => {
   clientCount++;
 
+  console.log(clientCount);
+  //console.log(io.sockets.clients());
+
   const shutdown = RegisterBreweryHandlers(io, socket, repository);
 
   socket.on("disconnect", () => {
     clientCount--;
+    console.log(clientCount);
+    //console.log(Object.keys(io.sockets.sockets).length);
     if (clientCount < 1) {
       console.log("emergency shutdown in 5 seconds.");
       setTimeout(() => {
-        console.log("Shutting down");
-        shutdown(null, () => {});
+        if (clientCount > 0) {
+          console.log("Shutdown aborted");
+        } else {
+          console.log("Shutting down");
+          shutdown(null, () => {});
+        }
       }, 5000);
     }
   });

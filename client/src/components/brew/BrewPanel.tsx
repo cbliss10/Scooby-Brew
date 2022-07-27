@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   BrewtrollerState,
   ControllerTemperature,
@@ -18,9 +18,12 @@ export function BrewPanel(props: Props) {
   const { socket, status } = useContext(WebSocketContext);
   const [powerLevel, setPowerLevel] = useState<number>(0);
   const [temp, setTemp] = useState<ControllerTemperature>("--");
+  const [brewtrollerState, setBrewtrollerState] = useState<
+    "On" | "Off" | "PID" | "Trip"
+  >("Off");
 
   useEffect(() => {
-    subscribeToSocket();
+    //subscribeToSocket();
     return function cleanup() {
       if (socket !== undefined) {
         socket.removeAllListeners("brew:update");
@@ -33,14 +36,14 @@ export function BrewPanel(props: Props) {
   }, [socket]);
 
   const subscribeToSocket = () => {
-    console.log("Trying to subscribe to websocket events ... ");
     if (socket !== undefined && status === "Connected") {
       socket.on("brew:update", (updatedStates) => {
         try {
-          updatedStates.forEach((controllerDto) => {
-            if (controller.id === controllerDto.id) {
-              setTemp(controllerDto.temperature);
-              setPowerLevel(controllerDto.powerLevel);
+          updatedStates.forEach((brewtrollerState) => {
+            if (controller.id === brewtrollerState.id) {
+              setTemp(brewtrollerState.temperature);
+              setPowerLevel(brewtrollerState.powerLevel);
+              setBrewtrollerState(brewtrollerState.state);
               return;
             }
           });
@@ -74,6 +77,28 @@ export function BrewPanel(props: Props) {
     }
   };
 
+  const onBrewtrollerStateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    console.log(event.target.value);
+    const targetState = event.target.value;
+    if (
+      targetState !== "On" &&
+      targetState !== "Off" &&
+      targetState !== "PID" &&
+      targetState !== "Trip"
+    )
+      return;
+    if (socket !== undefined) {
+      // optimistic concurrency
+      setBrewtrollerState(targetState);
+
+      socket.emit("brew:adjust", { ...controller, state: targetState }, (res) =>
+        console.log(res)
+      );
+    }
+  };
+
   return (
     <div className="d-inline-flex flex-column p-2 border ">
       <h1>{controller.name}</h1>
@@ -82,6 +107,40 @@ export function BrewPanel(props: Props) {
         powerLevel={powerLevel}
         adjustPowerLevel={adjustPowerLevel}
       />
+      <div>
+        <input
+          type="radio"
+          value="PID"
+          checked={brewtrollerState === "PID"}
+          onChange={onBrewtrollerStateChange}
+          name={controller.name}
+        />
+        PID
+        <input
+          type="radio"
+          value="Trip"
+          checked={brewtrollerState === "Trip"}
+          onChange={onBrewtrollerStateChange}
+          name={controller.name}
+        />
+        Trip
+        <input
+          type="radio"
+          value="On"
+          checked={brewtrollerState === "On"}
+          onChange={onBrewtrollerStateChange}
+          name={controller.name}
+        />
+        On
+        <input
+          type="radio"
+          value="Off"
+          checked={brewtrollerState === "Off"}
+          onChange={onBrewtrollerStateChange}
+          name={controller.name}
+        />
+        Off
+      </div>
     </div>
   );
 }

@@ -94,7 +94,6 @@ export const RegisterBreweryHandlers = (
     acknowledgement: (res: Response<BrewtrollerState>) => void
   ) => {
     try {
-      console.log(`Setting power to ${payload.powerLevel}`);
       const currentBrewtrollerState = repository.GetBrewtrollerState(
         payload.id
       );
