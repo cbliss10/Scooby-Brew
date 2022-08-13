@@ -1,4 +1,6 @@
 import {
+  BrewController,
+  BrewControllerState,
   Brewtroller,
   BrewtrollerState,
   ControllerId,
@@ -21,9 +23,7 @@ export interface BreweryRepositoryContract {
   //GetControllerStates: () => Promise<UpdateDto[]>;
   DeleteController: (controllerId: ControllerId) => Promise<void>;
   AddController: (newController: Omit<Brewtroller, "id">) => Promise<void>;
-  SetBrewtrollerState(
-    brewtroller: BrewtrollerState
-  ): BrewtrollerState | undefined;
+  SetBrewtrollerState(brewtroller: BrewtrollerState): BrewtrollerState | undefined;
 }
 
 class BreweryRepository implements BreweryRepositoryContract {
@@ -59,9 +59,7 @@ class BreweryRepository implements BreweryRepositoryContract {
     }
   }
 
-  public SetBrewtrollerState(
-    brewtroller: BrewtrollerState
-  ): BrewtrollerState | undefined {
+  public SetBrewtrollerState(brewtroller: BrewtrollerState): BrewtrollerState | undefined {
     const res = this.controllers.set(brewtroller.id, brewtroller);
     return res.get(brewtroller.id);
   }
@@ -124,9 +122,7 @@ class BreweryRepository implements BreweryRepositoryContract {
       gotController.description = updatedController.description;
       gotController.heaterPin = updatedController.heaterPin;
       gotController.sensorAddress = updatedController.sensorAddress;
-      const updatedControllers: Brewtroller[] = Array.from(
-        this.controllers.values()
-      );
+      const updatedControllers: Brewtroller[] = Array.from(this.controllers.values());
       await this.WriteToFile(updatedControllers);
       await this.ReadFromFile();
       return Promise.resolve();
@@ -143,9 +139,7 @@ class BreweryRepository implements BreweryRepositoryContract {
       saveController.description = newController.description;
       saveController.heaterPin = newController.heaterPin;
       saveController.sensorAddress = newController.sensorAddress;
-      const updatedControllers: Brewtroller[] = Array.from(
-        this.controllers.values()
-      );
+      const updatedControllers: Brewtroller[] = Array.from(this.controllers.values());
       updatedControllers.push(saveController);
       await this.WriteToFile(updatedControllers);
       await this.ReadFromFile();
@@ -172,9 +166,7 @@ class BreweryRepository implements BreweryRepositoryContract {
     }
   }
 
-  SetControllerPower(
-    controllerPower: PowerLevelAdjustmentData
-  ): Promise<PowerLevelAdjustmentData> {
+  SetControllerPower(controllerPower: PowerLevelAdjustmentData): Promise<PowerLevelAdjustmentData> {
     const cont = this.controllers.get(controllerPower.id);
     if (cont !== undefined) {
       const updatedControllerState = {

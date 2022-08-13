@@ -18,9 +18,7 @@ export function BrewPanel(props: Props) {
   const { socket, status } = useContext(WebSocketContext);
   const [powerLevel, setPowerLevel] = useState<number>(0);
   const [temp, setTemp] = useState<ControllerTemperature>("--");
-  const [brewtrollerState, setBrewtrollerState] = useState<
-    "On" | "Off" | "PID" | "Trip"
-  >("Off");
+  const [brewtrollerState, setBrewtrollerState] = useState<"On" | "Off" | "PID" | "Trip">("Off");
 
   useEffect(() => {
     //subscribeToSocket();
@@ -77,9 +75,7 @@ export function BrewPanel(props: Props) {
     }
   };
 
-  const onBrewtrollerStateChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const onBrewtrollerStateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value);
     const targetState = event.target.value;
     if (
@@ -91,11 +87,10 @@ export function BrewPanel(props: Props) {
       return;
     if (socket !== undefined) {
       // optimistic concurrency
+      //debugger;
       setBrewtrollerState(targetState);
-
-      socket.emit("brew:adjust", { ...controller, state: targetState }, (res) =>
-        console.log(res)
-      );
+      const temp: AdjustmentData = { ...controller, state: targetState };
+      socket.emit("brew:adjust", temp, (res) => console.log(res));
     }
   };
 
@@ -103,10 +98,7 @@ export function BrewPanel(props: Props) {
     <div className="d-inline-flex flex-column p-2 border ">
       <h1>{controller.name}</h1>
       <TemperatureDisplay temperature={temp} units={units} />
-      <PowerLevelComponent
-        powerLevel={powerLevel}
-        adjustPowerLevel={adjustPowerLevel}
-      />
+      <PowerLevelComponent powerLevel={powerLevel} adjustPowerLevel={adjustPowerLevel} />
       <div>
         <input
           type="radio"

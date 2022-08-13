@@ -1,9 +1,5 @@
 import { Server, Socket } from "socket.io";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-  Response,
-} from "../events";
+import { ClientToServerEvents, ServerToClientEvents, Response } from "../events";
 import {
   AdjustmentData,
   Brewtroller,
@@ -14,6 +10,7 @@ import { GetAvailableSensors } from "../services/sensorService";
 import { sanitizeErrorMessage } from "../util";
 import { BreweryRepositoryContract } from "../repositories/breweryRepository";
 import * as brewtrollerService from "../services/brewtrollerService";
+import * as gpioService from "../services/gpioService";
 
 let isActive = false;
 let updateInterval = 1;
@@ -39,6 +36,7 @@ export const RegisterBreweryHandlers = (
         // end test
 
         const result = await repository.InitializeControllers();
+        ConfigureBrewtrollers();
         //setInterval(runUpdates, 2000);
         callback({ data: result });
       } else {
@@ -77,10 +75,7 @@ export const RegisterBreweryHandlers = (
     }
   };
 
-  const getSensors = async (
-    payload: any,
-    acknowledgement: (res: Response<string[]>) => void
-  ) => {
+  const getSensors = async (payload: any, acknowledgement: (res: Response<string[]>) => void) => {
     try {
       const ids = await GetAvailableSensors();
       acknowledgement({ data: ids });
@@ -94,15 +89,10 @@ export const RegisterBreweryHandlers = (
     acknowledgement: (res: Response<BrewtrollerState>) => void
   ) => {
     try {
-      const currentBrewtrollerState = repository.GetBrewtrollerState(
-        payload.id
-      );
-      if (currentBrewtrollerState === undefined)
-        throw new Error("Brewtroller not found");
+      const currentBrewtrollerState = repository.GetBrewtrollerState(payload.id);
+      if (currentBrewtrollerState === undefined) throw new Error("Brewtroller not found");
       const newOb = { ...currentBrewtrollerState, ...payload };
-      const updatedBrewtrollerState = await brewtrollerService.UpdateController(
-        newOb
-      );
+      const updatedBrewtrollerState = await brewtrollerService.UpdateController(newOb);
       const response = repository.SetBrewtrollerState(updatedBrewtrollerState);
       if (response === undefined) throw new Error("Error setting brewtroller");
       return acknowledgement({
@@ -122,9 +112,7 @@ export const RegisterBreweryHandlers = (
 
   const UpdateBrewtrollers = () => {
     repository.BrewtrollerStates().forEach(async (brewtroller) => {
-      repository.SetBrewtrollerState(
-        await brewtrollerService.UpdateController(brewtroller)
-      );
+      repository.SetBrewtrollerState(await brewtrollerService.UpdateController(brewtroller));
     });
   };
 
@@ -141,8 +129,7 @@ export const RegisterBreweryHandlers = (
   };
 
   const StartUpdateLoop = () => {
-    if (updateIntervalTimer === null)
-      updateIntervalTimer = setInterval(UpdateLoop, 1000);
+    if (updateIntervalTimer === null) updateIntervalTimer = setInterval(UpdateLoop, 1000);
   };
 
   const StopUpdateLoop = () => {
@@ -150,6 +137,14 @@ export const RegisterBreweryHandlers = (
       clearInterval(updateIntervalTimer);
       updateIntervalTimer = null;
     }
+  };
+
+  const ConfigureBrewtrollers = () => {
+    const brewtrollers = repository.BrewtrollerStates();
+    brewtrollers.forEach((brewtroller) => {
+      if (brewtroller.heaterPin == "NA") return;
+      gpioService.SetupPin(brewtroller.heaterPin, gpioService.PinMode.PWM);
+    });
   };
 
   //crud
