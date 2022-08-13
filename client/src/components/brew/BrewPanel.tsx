@@ -36,6 +36,7 @@ export function BrewPanel(props: Props) {
   const subscribeToSocket = () => {
     if (socket !== undefined && status === "Connected") {
       socket.on("brew:update", (updatedStates) => {
+        console.log("brew:update");
         try {
           updatedStates.forEach((brewtrollerState) => {
             if (controller.id === brewtrollerState.id) {

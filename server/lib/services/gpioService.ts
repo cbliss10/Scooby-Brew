@@ -6,7 +6,12 @@ import { PWM } from "rpio";
 
 const isTestMode = !fs.existsSync("C:/sys/bus/w1/devices/w1_slave");
 //const service = isTestMode ? mockService : ds18b20;
-if (isTestMode) rpio.init({ mock: "raspi-3" });
+if (isTestMode)
+  rpio.init({
+    mock: "raspi-3",
+    gpiomem: false,
+  });
+else rpio.init({ gpiomem: false });
 
 const defaultClockDivider = 64;
 const defaultRange = 100;
