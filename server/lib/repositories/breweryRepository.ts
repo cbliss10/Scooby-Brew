@@ -8,6 +8,7 @@ import {
 } from "../models/brewtrollerModels";
 import * as path from "path";
 import * as fs from "fs/promises";
+import { Brewery, BreweryState } from "../models/breweryModels";
 
 let testDirection: "Up" | "Down" = "Up";
 
@@ -17,25 +18,36 @@ export interface BreweryRepositoryContract {
   //UpdateController: (updatedController: BrewController) => Promise<void>;
   BrewtrollerStates: () => BrewtrollerState[];
   //GetControllers: () => Promise<BrewController[]>;
-  SetControllerPower: (
-    controllerPower: PowerLevelAdjustmentData
-  ) => Promise<PowerLevelAdjustmentData>;
   //GetControllerStates: () => Promise<UpdateDto[]>;
   DeleteController: (controllerId: ControllerId) => Promise<void>;
   AddController: (newController: Omit<Brewtroller, "id">) => Promise<void>;
   SetBrewtrollerState(brewtroller: BrewtrollerState): BrewtrollerState | undefined;
+  GetBreweryState(): BreweryState;
 }
 
 class BreweryRepository implements BreweryRepositoryContract {
+  GetBreweryState(): BreweryState {
+    throw new Error("Method not implemented.");
+  }
   GetBrewtrollerState(id: string): BrewtrollerState | undefined {
-    return this.controllers.get(id);
+    this.breweryState.brewtrollerStates.forEach((brewtroller) => {
+      if (brewtroller.id === id) return brewtroller;
+    });
+    return undefined;
   }
 
   PowerOff() {
     //throw new Error("Method not implemented.");
     console.log("Power off method not yet implemented.");
   }
-  private readonly controllers: Map<ControllerId, BrewtrollerState> = new Map();
+
+  private breweryState: BreweryState = {
+    name: "New Brewery",
+    state: "OFF",
+    brewtrollerStates: [],
+  };
+
+  //private readonly controllers: Map<ControllerId, BrewtrollerState> = new Map();
 
   private readonly filePath = path.join(__dirname, "Controllers.json");
 
@@ -43,15 +55,21 @@ class BreweryRepository implements BreweryRepositoryContract {
     try {
       const data = await fs.readFile(this.filePath, "utf8");
       const obj = JSON.parse(data);
-      const controllersDto: BrewtrollerState[] = obj;
-      this.controllers.clear();
-      controllersDto.forEach((controller) => {
-        const newController = new BrewtrollerState();
-        this.controllers.set(controller.id, {
-          ...newController,
-          ...controller,
-        });
+      const brewery: Brewery = obj;
+      const initialStates: BrewtrollerState[] = brewery.brewtrollers.map((brewtroller) => {
+        let newState = new BrewtrollerState();
+        newState = { ...newState, ...brewtroller };
+        return newState;
       });
+      this.breweryState = { ...this.breweryState, ...brewery, brewtrollerStates: initialStates };
+      //this.breweryState.brewtrollerStates = initialStates;
+      // controllersDto.forEach((controller) => {
+      //   const newController = new BrewtrollerState();
+      //   this.controllers.set(controller.id, {
+      //     ...newController,
+      //     ...controller,
+      //   });
+      // });
       return Promise.resolve();
     } catch (e) {
       console.log(e);
@@ -59,18 +77,22 @@ class BreweryRepository implements BreweryRepositoryContract {
     }
   }
 
-  public SetBrewtrollerState(brewtroller: BrewtrollerState): BrewtrollerState | undefined {
-    const res = this.controllers.set(brewtroller.id, brewtroller);
-    return res.get(brewtroller.id);
+  public SetBrewtrollerState(updatedBrewtroller: BrewtrollerState): BrewtrollerState | undefined {
+    // const res = this.controllers.set(brewtroller.id, brewtroller);
+    const newBrewtrollerStates = this.breweryState.brewtrollerStates.map((brewtroller) =>
+      brewtroller.id === updatedBrewtroller.id ? updatedBrewtroller : brewtroller
+    );
+    this.breweryState.brewtrollerStates = newBrewtrollerStates;
+    return updatedBrewtroller;
   }
 
   public BrewtrollerStates(): BrewtrollerState[] {
-    return Array.from(this.controllers.values());
+    return this.breweryState.brewtrollerStates;
   }
 
-  private async WriteToFile(controllers: Brewtroller[]): Promise<void> {
+  private async WriteToFile(brewery: Brewery): Promise<void> {
     try {
-      await fs.writeFile(this.filePath, JSON.stringify(controllers));
+      await fs.writeFile(this.filePath, JSON.stringify(brewery));
       return Promise.resolve();
     } catch (err) {
       console.log(err);
@@ -106,31 +128,13 @@ class BreweryRepository implements BreweryRepositoryContract {
   async InitializeControllers(): Promise<BrewtrollerState[]> {
     try {
       await this.ReadFromFile();
-      const controllers = Array.from(this.controllers.values());
+      const controllers = this.breweryState.brewtrollerStates;
       return Promise.resolve(controllers);
     } catch (error) {
       return Promise.reject();
     }
   }
 
-  async UpdateController(updatedController: Brewtroller): Promise<void> {
-    try {
-      const gotController = this.controllers.get(updatedController.id);
-      if (gotController === undefined) throw new Error("controller not found");
-      // map properties
-      gotController.name = updatedController.name;
-      gotController.description = updatedController.description;
-      gotController.heaterPin = updatedController.heaterPin;
-      gotController.sensorAddress = updatedController.sensorAddress;
-      const updatedControllers: Brewtroller[] = Array.from(this.controllers.values());
-      await this.WriteToFile(updatedControllers);
-      await this.ReadFromFile();
-      return Promise.resolve();
-    } catch (err) {
-      console.log(err);
-      return Promise.reject();
-    }
-  }
   async AddController(newController: Omit<Brewtroller, "id">): Promise<void> {
     try {
       // map properties
@@ -139,9 +143,9 @@ class BreweryRepository implements BreweryRepositoryContract {
       saveController.description = newController.description;
       saveController.heaterPin = newController.heaterPin;
       saveController.sensorAddress = newController.sensorAddress;
-      const updatedControllers: Brewtroller[] = Array.from(this.controllers.values());
-      updatedControllers.push(saveController);
-      await this.WriteToFile(updatedControllers);
+      const updatedBrewery: Brewery = { ...this.breweryState, brewtrollers: [] };
+      updatedBrewery.brewtrollers.push(saveController);
+      await this.WriteToFile(updatedBrewery);
       await this.ReadFromFile();
       return Promise.resolve();
     } catch (err) {
@@ -151,32 +155,17 @@ class BreweryRepository implements BreweryRepositoryContract {
   }
   async DeleteController(controllerId: ControllerId): Promise<void> {
     try {
-      const newControllers: Brewtroller[] = [];
-      this.controllers.forEach((controller) => {
-        if (controller.id !== controllerId) {
-          newControllers.push(controller);
-        }
-      });
-      await this.WriteToFile(newControllers);
+      const newBrewtrollers: Brewtroller[] = this.breweryState.brewtrollerStates.filter(
+        (brewtroller) => brewtroller.id === controllerId
+      );
+      const brewery: Brewery = { ...this.breweryState, brewtrollers: newBrewtrollers };
+      await this.WriteToFile(brewery);
       await this.ReadFromFile();
       return Promise.resolve();
     } catch (err) {
       console.log(err);
       return Promise.reject();
     }
-  }
-
-  SetControllerPower(controllerPower: PowerLevelAdjustmentData): Promise<PowerLevelAdjustmentData> {
-    const cont = this.controllers.get(controllerPower.id);
-    if (cont !== undefined) {
-      const updatedControllerState = {
-        ...cont,
-        powerLevel: controllerPower.powerLevel,
-      };
-      this.controllers.set(controllerPower.id, updatedControllerState);
-      return Promise.resolve(controllerPower);
-    }
-    return Promise.reject();
   }
 
   EmergencyShutdown(): void {

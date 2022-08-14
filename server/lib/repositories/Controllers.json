@@ -1,29 +1,32 @@
-[
-  {
-    "id": "test",
-    "name": "HLT",
-    "description": "This is a test controller",
-    "heaterPin": 33,
-    "sensorAddress": "aaaaaa",
-    "temperature": 194,
-    "powerLevel": 4
-  },
-  {
-    "id": "58ff2a01-f62c-4b50-8d77-25fd75c91df3",
-    "name": "Mash Tun",
-    "description": "The pot that starch to sugar conversion occurs in.",
-    "heaterPin": "NA",
-    "sensorAddress": "bbbbbb",
-    "temperature": 137,
-    "powerLevel": 7
-  },
-  {
-    "id": "4cf9a508-c132-49c9-afd9-c48006f98bb3",
-    "name": "New controller",
-    "description": "",
-    "heaterPin": "NA",
-    "sensorAddress": "cccccc",
-    "temperature": 137,
-    "powerLevel": 0
-  }
-]
+{
+  "name": "New Brewery",
+  "brewtrollers": [
+    {
+      "id": "test",
+      "name": "HLT",
+      "description": "This is a test controller",
+      "heaterPin": 33,
+      "sensorAddress": "aaaaaa",
+      "temperature": 194,
+      "powerLevel": 4
+    },
+    {
+      "id": "58ff2a01-f62c-4b50-8d77-25fd75c91df3",
+      "name": "Mash Tun",
+      "description": "The pot that starch to sugar conversion occurs in.",
+      "heaterPin": "NA",
+      "sensorAddress": "bbbbbb",
+      "temperature": 137,
+      "powerLevel": 7
+    },
+    {
+      "id": "4cf9a508-c132-49c9-afd9-c48006f98bb3",
+      "name": "New controller",
+      "description": "",
+      "heaterPin": "NA",
+      "sensorAddress": "cccccc",
+      "temperature": 137,
+      "powerLevel": 0
+    }
+  ]
+}
