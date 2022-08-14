@@ -118,7 +118,7 @@ export const RegisterBreweryHandlers = (
 
   const EmitBrewtrollerStates = async () => {
     const brewtrollerStates = await repository.BrewtrollerStates();
-    socket.emit("brew:update", brewtrollerStates);
+    io.emit("brew:update", brewtrollerStates);
   };
 
   const ShutdownBrewery = () => {
