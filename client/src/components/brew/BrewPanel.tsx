@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
+import { WebSocketContext } from "../../context/websocketContext";
 import {
+  AdjustmentData,
   BrewtrollerState,
   ControllerTemperature,
-  AdjustmentData,
-} from "../../../../server/lib/models/brewtrollerModels";
-import { WebSocketContext } from "../../context/websocketContext";
+} from "../../models/brewtrollerModels";
 import { PowerLevelComponent } from "./HeatControl";
 import { TemperatureDisplay } from "./TempDisplay";
 
@@ -35,21 +35,21 @@ export function BrewPanel(props: Props) {
 
   const subscribeToSocket = () => {
     if (socket !== undefined && status === "Connected") {
-      socket.on("brew:update", (updatedStates) => {
-        console.log("brew:update");
-        try {
-          updatedStates.forEach((brewtrollerState) => {
-            if (controller.id === brewtrollerState.id) {
-              setTemp(brewtrollerState.temperature);
-              setPowerLevel(brewtrollerState.powerLevel);
-              setBrewtrollerState(brewtrollerState.state);
-              return;
-            }
-          });
-        } catch (err) {
-          console.log(err);
-        }
-      });
+      // socket.on("brew:update", (updatedStates) => {
+      //   console.log("brew:update");
+      //   try {
+      //     updatedStates.forEach((brewtrollerState) => {
+      //       if (controller.id === brewtrollerState.id) {
+      //         setTemp(brewtrollerState.temperature);
+      //         setPowerLevel(brewtrollerState.powerLevel);
+      //         setBrewtrollerState(brewtrollerState.state);
+      //         return;
+      //       }
+      //     });
+      //   } catch (err) {
+      //     console.log(err);
+      //   }
+      // });
     }
   };
 

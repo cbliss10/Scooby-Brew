@@ -31,6 +31,9 @@ export const RegisterBreweryHandlers = (
         // test
 
         isActive = true;
+        const brewery = repository.GetBreweryState();
+        brewery.state = "ON";
+        repository.SetBreweryState(brewery);
         StartUpdateLoop();
 
         // end test
@@ -54,8 +57,8 @@ export const RegisterBreweryHandlers = (
     payload: any,
     callback: (res?: Response<BrewtrollerState[]>) => void
   ) => {
-    StopUpdateLoop();
     ShutdownBrewery();
+    StopUpdateLoop();
     isActive = false;
   };
 
@@ -117,15 +120,12 @@ export const RegisterBreweryHandlers = (
   };
 
   const EmitBrewtrollerStates = async () => {
-    const brewtrollerStates = await repository.BrewtrollerStates();
+    const brewtrollerStates = await repository.GetBreweryState();
     io.emit("brew:update", brewtrollerStates);
   };
 
   const ShutdownBrewery = () => {
-    console.log(repository.BrewtrollerStates().length);
-    repository.BrewtrollerStates().forEach((brewtroller) => {
-      console.log(`Shutting down ${brewtroller.name}`);
-    });
+    repository.PowerOff();
   };
 
   const StartUpdateLoop = () => {
@@ -137,6 +137,7 @@ export const RegisterBreweryHandlers = (
       clearInterval(updateIntervalTimer);
       updateIntervalTimer = null;
     }
+    EmitBrewtrollerStates();
   };
 
   const ConfigureBrewtrollers = () => {
@@ -156,6 +157,8 @@ export const RegisterBreweryHandlers = (
   socket.on("brew:stop", StopBrewery);
   socket.on("brew:adjust", makeAdjustment);
   //socket.on("disconnect", shutdownRepository);
+
+  socket.emit("brew:initialState", repository.GetBreweryState());
 
   return StopBrewery;
 };

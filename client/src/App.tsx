@@ -5,11 +5,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap";
 import Layout from "./components/common/layout";
 import { BrewPage } from "./components/brew/BrewPage";
-import { WebSocketContextProvider } from "./context/websocketContext";
+import { Provider } from "react-redux";
+import { store } from "./store";
 
 function App() {
   return (
-    <WebSocketContextProvider>
+    <Provider store={store}>
       <BrowserRouter>
         <Layout>
           <Routes>
@@ -18,7 +19,7 @@ function App() {
           </Routes>
         </Layout>
       </BrowserRouter>
-    </WebSocketContextProvider>
+    </Provider>
   );
 }
 

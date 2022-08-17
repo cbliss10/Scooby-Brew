@@ -1,9 +1,6 @@
 import { ValidationErrorItem } from "joi";
-import {
-  AdjustmentData,
-  Brewtroller,
-  BrewtrollerState,
-} from "./models/brewtrollerModels";
+import { BreweryState } from "./models/breweryModels";
+import { AdjustmentData, Brewtroller, BrewtrollerState } from "./models/brewtrollerModels";
 
 interface Success<T> {
   data: T;
@@ -17,7 +14,8 @@ interface Error {
 export type Response<T> = Error | Success<T>;
 
 export interface ServerToClientEvents {
-  "brew:update": (state: BrewtrollerState[]) => void;
+  "brew:update": (state: BreweryState) => void;
+  "brew:initialState": (state: BreweryState) => void;
 }
 
 export interface ClientToServerEvents {
@@ -38,10 +36,7 @@ export interface ClientToServerEvents {
     controllerId: string,
     acknowledgement: (res?: Response<void>) => void
   ) => void;
-  "sensor:getAll": (
-    payload: any,
-    acknowledgement: (res: Response<string[]>) => void
-  ) => void;
+  "sensor:getAll": (payload: any, acknowledgement: (res: Response<string[]>) => void) => void;
 
   // Brewing events
   "brew:adjust": (

@@ -1,36 +1,40 @@
 import { BreweryPanels } from "./BreweryPanels";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../common/Spinner";
-import { BrewtrollerState } from "../../../../server/lib/models/brewtrollerModels";
-import { WebSocketContext } from "../../context/websocketContext";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { selectBrewery, update } from "../../slices/brewerySlice";
+import { ClientToServerEvents, ServerToClientEvents } from "../../../../server/lib/events";
+import { default as io, Socket } from "socket.io-client";
 
 export const BrewPage = () => {
-  const [brewControllers, setBrewControllers] = useState<
-    BrewtrollerState[] | undefined
+  const breweryState = useAppSelector(selectBrewery);
+  const [socket, setSocket] = useState<
+    Socket<ClientToServerEvents, ServerToClientEvents> | undefined
   >(undefined);
-  const { socket, status } = useContext(WebSocketContext);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     getControllers();
-    return function cleanup() {};
-  }, [status]);
+  }, []);
 
   function getControllers() {
-    if (socket !== undefined && status === "Connected") {
-      setIsLoaded(false);
-      socket.emit("brew:start", "Start Brew", (res) => {
-        console.log("got response");
-        if (res !== undefined) {
-          if ("error" in res) {
-            console.log(res.error);
-          } else {
-            setBrewControllers(res.data);
-            setIsLoaded(true);
-          }
-        } else console.log("res is undefined");
-      });
-    }
+    const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> =
+      io("http://localhost:3001");
+    setSocket(newSocket);
+
+    newSocket.on("brew:initialState", (res) => {
+      console.log(res);
+      dispatch(update(res));
+      setIsLoaded(true);
+    });
+
+    newSocket.on("brew:update", (state) => {
+      console.log("here");
+      dispatch(update(state));
+    });
+
+    // Add 'socket.on's here
   }
 
   return (
@@ -38,8 +42,11 @@ export const BrewPage = () => {
       <h1 className="text-center">Brew!</h1>
       {/* <BrewerySwitchBar breweryStatus={brewerySettings.status} /> */}
       <div className="d-flex justify-content-center">
-        {isLoaded && brewControllers !== undefined ? (
-          <BreweryPanels brewControllers={brewControllers} />
+        {isLoaded && breweryState !== undefined ? (
+          <div>
+            <h1>State:{breweryState.state}</h1>
+            <BreweryPanels brewControllers={breweryState.brewtrollerStates} />
+          </div>
         ) : (
           <div>
             <Spinner />

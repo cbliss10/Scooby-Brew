@@ -9,10 +9,12 @@ import {
 import * as path from "path";
 import * as fs from "fs/promises";
 import { Brewery, BreweryState } from "../models/breweryModels";
+import { off } from "process";
 
 let testDirection: "Up" | "Down" = "Up";
 
 export interface BreweryRepositoryContract {
+  SetBreweryState(brewery: BreweryState): void;
   GetBrewtrollerState(id: string): BrewtrollerState | undefined;
   InitializeControllers: () => Promise<BrewtrollerState[]>;
   //UpdateController: (updatedController: BrewController) => Promise<void>;
@@ -23,11 +25,15 @@ export interface BreweryRepositoryContract {
   AddController: (newController: Omit<Brewtroller, "id">) => Promise<void>;
   SetBrewtrollerState(brewtroller: BrewtrollerState): BrewtrollerState | undefined;
   GetBreweryState(): BreweryState;
+  PowerOff(): void;
 }
 
 class BreweryRepository implements BreweryRepositoryContract {
+  SetBreweryState(brewery: BreweryState) {
+    this.breweryState = brewery;
+  }
   GetBreweryState(): BreweryState {
-    throw new Error("Method not implemented.");
+    return { ...this.breweryState };
   }
   GetBrewtrollerState(id: string): BrewtrollerState | undefined {
     this.breweryState.brewtrollerStates.forEach((brewtroller) => {
@@ -37,8 +43,13 @@ class BreweryRepository implements BreweryRepositoryContract {
   }
 
   PowerOff() {
-    //throw new Error("Method not implemented.");
-    console.log("Power off method not yet implemented.");
+    this.breweryState.state = "OFF";
+    this.breweryState.brewtrollerStates = this.breweryState.brewtrollerStates.map((brewtroller) => {
+      brewtroller.state = "Off";
+      brewtroller.temperature = "--";
+      brewtroller.powerLevel = 0;
+      return brewtroller;
+    });
   }
 
   private breweryState: BreweryState = {
@@ -128,8 +139,8 @@ class BreweryRepository implements BreweryRepositoryContract {
   async InitializeControllers(): Promise<BrewtrollerState[]> {
     try {
       await this.ReadFromFile();
-      const controllers = this.breweryState.brewtrollerStates;
-      return Promise.resolve(controllers);
+      const brewtrollerStates = this.breweryState.brewtrollerStates;
+      return Promise.resolve(brewtrollerStates);
     } catch (error) {
       return Promise.reject();
     }

@@ -1,9 +1,6 @@
 import { Socket } from "socket.io-client";
-import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from "../../../../server/lib/events";
-import { BrewtrollerState } from "../../../../server/lib/models/brewtrollerModels";
+import { ClientToServerEvents, ServerToClientEvents } from "../../../../server/lib/events";
+import { BrewtrollerState } from "../../models/brewtrollerModels";
 import { BrewPanel } from "./BrewPanel";
 
 interface BreweryPanelProps {
