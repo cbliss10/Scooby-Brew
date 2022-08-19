@@ -9,7 +9,7 @@ import { default as io, Socket } from "socket.io-client";
 export const BrewPage = () => {
   const breweryState = useAppSelector(selectBrewery);
   const [socket, setSocket] = useState<
-    Socket<ClientToServerEvents, ServerToClientEvents> | undefined
+    Socket<ServerToClientEvents, ClientToServerEvents> | undefined
   >(undefined);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const dispatch = useAppDispatch();
@@ -37,6 +37,18 @@ export const BrewPage = () => {
     // Add 'socket.on's here
   }
 
+  const toggleBrewery = (breweryState: "ON" | "OFF") => {
+    if (breweryState === "ON") {
+      socket?.emit("brew:start", null, (response) => {
+        if (response != undefined) dispatch(update(response));
+      });
+    } else {
+      socket?.emit("brew:stop", null, (response) => {
+        if (response != undefined) dispatch(update(response));
+      });
+    }
+  };
+
   return (
     <>
       <h1 className="text-center">Brew!</h1>
@@ -46,6 +58,8 @@ export const BrewPage = () => {
           <div>
             <h1>State:{breweryState.state}</h1>
             <BreweryPanels brewControllers={breweryState.brewtrollerStates} />
+            <button onClick={() => toggleBrewery("ON")}>On</button>
+            <button onClick={() => toggleBrewery("OFF")}>Off</button>
           </div>
         ) : (
           <div>

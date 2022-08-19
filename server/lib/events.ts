@@ -43,12 +43,6 @@ export interface ClientToServerEvents {
     adjustmentData: AdjustmentData,
     acknowledgement: (res?: Response<BrewtrollerState>) => void
   ) => void;
-  "brew:start": (
-    payload: any,
-    acknowledgement: (res?: Response<BrewtrollerState[]>) => void
-  ) => void;
-  "brew:stop": (
-    payload: any,
-    acknowledgement: (res?: Response<BrewtrollerState[]>) => void
-  ) => void;
+  "brew:start": (payload: any, acknowledgement: (res?: BreweryState) => void) => void;
+  "brew:stop": (payload: any, acknowledgement: (res?: BreweryState) => void) => void;
 }

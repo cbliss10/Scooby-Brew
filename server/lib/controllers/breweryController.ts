@@ -11,6 +11,7 @@ import { sanitizeErrorMessage } from "../util";
 import { BreweryRepositoryContract } from "../repositories/breweryRepository";
 import * as brewtrollerService from "../services/brewtrollerService";
 import * as gpioService from "../services/gpioService";
+import { BreweryState } from "../models/breweryModels";
 
 let isActive = false;
 let updateInterval = 1;
@@ -22,10 +23,7 @@ export const RegisterBreweryHandlers = (
   socket: Socket<ClientToServerEvents, ServerToClientEvents>,
   repository: BreweryRepositoryContract
 ) => {
-  const startBrewery = async (
-    payload: any,
-    callback: (res?: Response<BrewtrollerState[]>) => void
-  ) => {
+  const startBrewery = async (payload: any, callback: (res?: BreweryState) => void) => {
     try {
       if (!isActive) {
         // test
@@ -41,25 +39,19 @@ export const RegisterBreweryHandlers = (
         const result = await repository.InitializeControllers();
         ConfigureBrewtrollers();
         //setInterval(runUpdates, 2000);
-        callback({ data: result });
+        callback(result);
       } else {
-        const result = repository.BrewtrollerStates();
-        callback({ data: result });
+        const result = repository.GetBreweryState();
+        callback(result);
       }
-    } catch (err) {
-      return callback({
-        error: sanitizeErrorMessage(err),
-      });
-    }
+    } catch (err) {}
   };
 
-  const StopBrewery = async (
-    payload: any,
-    callback: (res?: Response<BrewtrollerState[]>) => void
-  ) => {
+  const StopBrewery = async (payload: any, callback: (res?: BreweryState) => void) => {
     ShutdownBrewery();
     StopUpdateLoop();
     isActive = false;
+    return repository.GetBreweryState();
   };
 
   const getControllerList = async (

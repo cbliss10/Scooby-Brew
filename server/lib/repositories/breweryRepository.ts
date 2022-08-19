@@ -16,7 +16,7 @@ let testDirection: "Up" | "Down" = "Up";
 export interface BreweryRepositoryContract {
   SetBreweryState(brewery: BreweryState): void;
   GetBrewtrollerState(id: string): BrewtrollerState | undefined;
-  InitializeControllers: () => Promise<BrewtrollerState[]>;
+  InitializeControllers: () => Promise<BreweryState>;
   //UpdateController: (updatedController: BrewController) => Promise<void>;
   BrewtrollerStates: () => BrewtrollerState[];
   //GetControllers: () => Promise<BrewController[]>;
@@ -136,11 +136,11 @@ class BreweryRepository implements BreweryRepositoryContract {
   //   return Promise.resolve(results);
   // }
 
-  async InitializeControllers(): Promise<BrewtrollerState[]> {
+  async InitializeControllers(): Promise<BreweryState> {
     try {
       await this.ReadFromFile();
-      const brewtrollerStates = this.breweryState.brewtrollerStates;
-      return Promise.resolve(brewtrollerStates);
+      const breweryState = this.breweryState;
+      return Promise.resolve(breweryState);
     } catch (error) {
       return Promise.reject();
     }
