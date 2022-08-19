@@ -17,10 +17,7 @@ export interface BreweryRepositoryContract {
   SetBreweryState(brewery: BreweryState): void;
   GetBrewtrollerState(id: string): BrewtrollerState | undefined;
   InitializeControllers: () => Promise<BreweryState>;
-  //UpdateController: (updatedController: BrewController) => Promise<void>;
   BrewtrollerStates: () => BrewtrollerState[];
-  //GetControllers: () => Promise<BrewController[]>;
-  //GetControllerStates: () => Promise<UpdateDto[]>;
   DeleteController: (controllerId: ControllerId) => Promise<void>;
   AddController: (newController: Omit<Brewtroller, "id">) => Promise<void>;
   SetBrewtrollerState(brewtroller: BrewtrollerState): BrewtrollerState | undefined;
@@ -29,6 +26,10 @@ export interface BreweryRepositoryContract {
 }
 
 class BreweryRepository implements BreweryRepositoryContract {
+  constructor() {
+    this.ReadFromFile();
+  }
+
   SetBreweryState(brewery: BreweryState) {
     this.breweryState = brewery;
   }
@@ -73,14 +74,6 @@ class BreweryRepository implements BreweryRepositoryContract {
         return newState;
       });
       this.breweryState = { ...this.breweryState, ...brewery, brewtrollerStates: initialStates };
-      //this.breweryState.brewtrollerStates = initialStates;
-      // controllersDto.forEach((controller) => {
-      //   const newController = new BrewtrollerState();
-      //   this.controllers.set(controller.id, {
-      //     ...newController,
-      //     ...controller,
-      //   });
-      // });
       return Promise.resolve();
     } catch (e) {
       console.log(e);
@@ -110,31 +103,6 @@ class BreweryRepository implements BreweryRepositoryContract {
       return Promise.reject();
     }
   }
-
-  // private async UpdateStates(): Promise<void> {
-  //   // get controller temperature and set pwm powerLevel here
-  //   try {
-  //     const self = this;
-  //     this.controllers.forEach(async (controller) => {
-  //       const updatedController = await controllerService.UpdateController(
-  //         controller
-  //       );
-  //       self.controllers.set(controller.id, updatedController);
-  //     });
-  //     return Promise.resolve();
-  //   } catch (err) {
-  //     console.log(err);
-  //     return Promise.reject();
-  //   }
-  // }
-
-  // async GetControllers(): Promise<BrewController[]> {
-  //   const results: BrewController[] = [];
-  //   this.controllers.forEach((controller) => {
-  //     results.push(controller);
-  //   });
-  //   return Promise.resolve(results);
-  // }
 
   async InitializeControllers(): Promise<BreweryState> {
     try {

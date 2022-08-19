@@ -24,17 +24,14 @@ export const BrewPage = () => {
     setSocket(newSocket);
 
     newSocket.on("brew:initialState", (res) => {
-      console.log(res);
       dispatch(update(res));
       setIsLoaded(true);
     });
 
     newSocket.on("brew:update", (state) => {
-      console.log("here");
+      console.log(state);
       dispatch(update(state));
     });
-
-    // Add 'socket.on's here
   }
 
   const toggleBrewery = (breweryState: "ON" | "OFF") => {
@@ -57,7 +54,7 @@ export const BrewPage = () => {
         {isLoaded && breweryState !== undefined ? (
           <div>
             <h1>State:{breweryState.state}</h1>
-            <BreweryPanels brewControllers={breweryState.brewtrollerStates} />
+            <BreweryPanels brewtrollers={breweryState.brewtrollerStates} />
             <button onClick={() => toggleBrewery("ON")}>On</button>
             <button onClick={() => toggleBrewery("OFF")}>Off</button>
           </div>

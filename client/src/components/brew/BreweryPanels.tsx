@@ -1,18 +1,16 @@
-import { Socket } from "socket.io-client";
-import { ClientToServerEvents, ServerToClientEvents } from "../../../../server/lib/events";
 import { BrewtrollerState } from "../../models/brewtrollerModels";
 import { BrewPanel } from "./BrewPanel";
 
 interface BreweryPanelProps {
-  brewControllers: BrewtrollerState[];
+  brewtrollers: BrewtrollerState[];
 }
 
 export function BreweryPanels(props: BreweryPanelProps) {
-  const { brewControllers } = props;
+  const { brewtrollers } = props;
 
   return (
     <div>
-      {brewControllers.map((controller) => {
+      {brewtrollers.map((controller) => {
         return <BrewPanel key={controller.id} controller={controller} />;
       })}
     </div>

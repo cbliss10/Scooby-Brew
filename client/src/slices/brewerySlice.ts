@@ -14,6 +14,8 @@ const brewerySlice = createSlice({
   reducers: {
     update: (state, action: PayloadAction<BreweryState>) => {
       state.state = action.payload.state;
+      state.brewtrollerStates = action.payload.brewtrollerStates;
+      state.name = action.payload.name;
     },
   },
 });

@@ -20,13 +20,13 @@ export const UpdateController = async (
 ): Promise<BrewtrollerState> => {
   let updatedController: BrewtrollerState = { ...updateRequest };
 
+  updatedController.temperature = await sensorService.GetTemperature(
+    updatedController.sensorAddress
+  );
   if (updatedController.state === "Off") {
-    updatedController.temperature = "--";
+    //updatedController.temperature = "--";
     updatedController.powerLevel = 0;
   } else {
-    updatedController.temperature = await sensorService.GetTemperature(
-      updatedController.sensorAddress
-    );
     if (updatedController.state === "On") {
       // do nothing?
     }
