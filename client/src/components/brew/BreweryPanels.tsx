@@ -1,8 +1,8 @@
-import { BrewtrollerState } from "../../models/brewtrollerModels";
+import { BrewtrollerStateDto } from "../../../../server/lib/models/brewtrollerModels";
 import { BrewPanel } from "./BrewPanel";
 
 interface BreweryPanelProps {
-  brewtrollers: BrewtrollerState[];
+  brewtrollers: BrewtrollerStateDto[];
 }
 
 export function BreweryPanels(props: BreweryPanelProps) {

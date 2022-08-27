@@ -9,13 +9,15 @@ export class Brewtroller {
   sensorAddress: string = "";
 }
 
+export type BrewtrollerMode = "PID" | "Trip" | "On" | "Off";
+
 export type ControllerTemperature = number | "--";
 
 export class BrewtrollerState extends Brewtroller {
   temperature: ControllerTemperature = "--";
   powerLevel: number = 0;
   targetTemperature: number = 150;
-  state: "PID" | "Trip" | "On" | "Off" = "Off";
+  state: BrewtrollerMode = "Off";
 }
 
 export interface PowerLevelAdjustmentData {

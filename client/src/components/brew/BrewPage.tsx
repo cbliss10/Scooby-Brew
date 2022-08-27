@@ -1,10 +1,14 @@
 import { BreweryPanels } from "./BreweryPanels";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import Spinner from "../common/Spinner";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { selectBrewery, update } from "../../slices/brewerySlice";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../../server/lib/events";
 import { default as io, Socket } from "socket.io-client";
+
+export const SocketContext = createContext<
+  Socket<ServerToClientEvents, ClientToServerEvents> | undefined
+>(undefined);
 
 export const BrewPage = () => {
   const breweryState = useAppSelector(selectBrewery);
@@ -47,14 +51,14 @@ export const BrewPage = () => {
   };
 
   return (
-    <>
+    <SocketContext.Provider value={socket}>
       <h1 className="text-center">Brew!</h1>
       {/* <BrewerySwitchBar breweryStatus={brewerySettings.status} /> */}
       <div className="d-flex justify-content-center">
         {isLoaded && breweryState !== undefined ? (
           <div>
-            <h1>State:{breweryState.state}</h1>
-            <BreweryPanels brewtrollers={breweryState.brewtrollerStates} />
+            <h1>State:{breweryState.mode}</h1>
+            <BreweryPanels brewtrollers={breweryState.brewtrollerDtos} />
             <button onClick={() => toggleBrewery("ON")}>On</button>
             <button onClick={() => toggleBrewery("OFF")}>Off</button>
           </div>
@@ -65,6 +69,6 @@ export const BrewPage = () => {
           </div>
         )}
       </div>
-    </>
+    </SocketContext.Provider>
   );
 };

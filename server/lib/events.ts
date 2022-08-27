@@ -1,6 +1,6 @@
 import { ValidationErrorItem } from "joi";
-import { BreweryState } from "./models/breweryModels";
-import { AdjustmentData, Brewtroller, BrewtrollerState } from "./models/brewtrollerModels";
+import { BreweryDto, BreweryState } from "./models/breweryModels";
+import { Brewtroller, BrewtrollerState, BrewtrollerStateDto } from "./models/brewtrollerModels";
 
 interface Success<T> {
   data: T;
@@ -14,8 +14,8 @@ interface Error {
 export type Response<T> = Error | Success<T>;
 
 export interface ServerToClientEvents {
-  "brew:update": (state: BreweryState) => void;
-  "brew:initialState": (state: BreweryState) => void;
+  "brew:update": (state: BreweryDto) => void;
+  "brew:initialState": (state: BreweryDto) => void;
 }
 
 export interface ClientToServerEvents {
@@ -33,16 +33,16 @@ export interface ClientToServerEvents {
     acknowledgement: (res?: Response<void>) => void
   ) => void;
   "controller:delete": (
-    controllerId: string,
+    controllerId: number,
     acknowledgement: (res?: Response<void>) => void
   ) => void;
   "sensor:getAll": (payload: any, acknowledgement: (res: Response<string[]>) => void) => void;
 
   // Brewing events
-  "brew:adjust": (
-    adjustmentData: AdjustmentData,
-    acknowledgement: (res?: Response<BrewtrollerState>) => void
+  "brew:update": (
+    updatedBrewtrollerState: BrewtrollerStateDto,
+    acknowledgement: (res?: BreweryDto) => void
   ) => void;
-  "brew:start": (payload: any, acknowledgement: (res?: BreweryState) => void) => void;
-  "brew:stop": (payload: any, acknowledgement: (res?: BreweryState) => void) => void;
+  "brew:start": (payload: any, acknowledgement: (res?: BreweryDto) => void) => void;
+  "brew:stop": (payload: any, acknowledgement: (res?: BreweryDto) => void) => void;
 }

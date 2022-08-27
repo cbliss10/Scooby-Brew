@@ -10,22 +10,19 @@ import { ControllerPanel } from "./ControllersPanel";
 
 const testInitialControllers: Brewtroller[] = [
   {
-    id: "test",
+    ...new Brewtroller(),
+    id: -1,
     name: "name",
     description: "This is a test controller",
     sensorAddress: "12345",
-    heaterPin: 3,
+    outputPin: 3,
   },
 ];
 
 export const ConfigPage = function () {
-  const [brewControllers, setBrewControllers] = useState<Brewtroller[]>(
-    testInitialControllers
-  );
+  const [brewControllers, setBrewControllers] = useState<Brewtroller[]>(testInitialControllers);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [selectedController, setSelectedController] = useState<
-    Brewtroller | undefined
-  >(undefined);
+  const [selectedController, setSelectedController] = useState<Brewtroller | undefined>(undefined);
   const [isNew, setIsNew] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { socket, status } = useContext(WebSocketContext);
@@ -48,11 +45,7 @@ export const ConfigPage = function () {
   }
 
   function deleteController(controller: Brewtroller) {
-    if (
-      window.confirm(
-        `Are you sure you would like to delete controller ${controller.name}`
-      )
-    ) {
+    if (window.confirm(`Are you sure you would like to delete controller ${controller.name}`)) {
       if (socket !== undefined) {
         socket.emit("controller:delete", controller.id, (res) => {
           console.log(res);

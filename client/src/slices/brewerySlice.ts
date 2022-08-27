@@ -1,20 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { BreweryDto } from "../../../server/lib/models/breweryModels";
 import { BreweryState } from "../models/breweryModels";
 import { RootState } from "../store";
 
-const initialState: BreweryState = {
-  state: "OFF",
+const initialState: BreweryDto = {
+  mode: "Off",
   name: "Default",
-  brewtrollerStates: [],
+  brewtrollerDtos: [],
 };
 
 const brewerySlice = createSlice({
   name: "brewery",
   initialState,
   reducers: {
-    update: (state, action: PayloadAction<BreweryState>) => {
-      state.state = action.payload.state;
-      state.brewtrollerStates = action.payload.brewtrollerStates;
+    update: (state, action: PayloadAction<BreweryDto>) => {
+      state.mode = action.payload.mode;
+      state.brewtrollerDtos = action.payload.brewtrollerDtos;
       state.name = action.payload.name;
     },
   },

@@ -2,7 +2,7 @@ import { createServer } from "http";
 import { Server, Socket } from "socket.io";
 import { ClientToServerEvents, ServerToClientEvents } from "./events";
 import { RegisterBreweryHandlers } from "./controllers/breweryController";
-import { InitializeRepository } from "./repositories/breweryRepository";
+import { InitializeBrewery } from "./repositories/breweryRepository";
 
 const httpServer = createServer();
 const serverOptions = {
@@ -12,24 +12,19 @@ const serverOptions = {
   },
 };
 
-const io = new Server<ClientToServerEvents, ServerToClientEvents>(
-  httpServer,
-  serverOptions
-);
+const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, serverOptions);
 
-const repository = InitializeRepository();
+InitializeBrewery();
 
 let clientCount = 0;
 
-const onConnection = (
-  socket: Socket<ClientToServerEvents, ServerToClientEvents>
-) => {
+const onConnection = (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {
   clientCount++;
 
   console.log(clientCount);
   //console.log(io.sockets.clients());
 
-  const shutdown = RegisterBreweryHandlers(io, socket, repository);
+  const shutdown = RegisterBreweryHandlers(io, socket);
 
   socket.on("disconnect", () => {
     clientCount--;
